@@ -137,3 +137,77 @@ dialog.dlg::backdrop { background: rgba(0,0,0,0.5); }
   .control-volumen input[type=range] { width: 70px; }
   .grilla { grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: 8px; }
 }
+
+/* ======================= selector de modo ======================= */
+.modos { display: flex; gap: 4px; margin-left: 16px; }
+.modo { background: var(--panel); border: 1px solid var(--linea); color: var(--texto-tenue); border-radius: 8px; padding: 6px 12px; font: inherit; font-family: "Barlow Semi Condensed", sans-serif; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; font-size: 12px; cursor: pointer; }
+.modo--activo { background: var(--acento); color: #fff; border-color: var(--acento); }
+
+/* ======================= módulo DJ ======================= */
+#dj { display: flex; flex-direction: column; gap: 14px; margin-bottom: 18px; }
+#dj[hidden] { display: none; }
+.dj-decks { display: grid; grid-template-columns: 1fr 150px 1fr; gap: 12px; align-items: stretch; }
+.deck { background: var(--panel); border: 1px solid var(--linea); border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 8px; --onda-fondo: var(--fondo); --onda-color: #3a86ff; }
+.deck--A { --onda-color: #3a86ff; } .deck--B { --onda-color: #ff006e; }
+.deck--sonando { border-color: var(--ok); }
+.deck--activo .deck-letra { background: var(--ok); color: #0a2; color: #062; }
+.deck--destino { outline: 3px dashed var(--acento); outline-offset: -3px; }
+.deck-cab { display: flex; align-items: center; gap: 10px; }
+.deck-letra { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--linea); font-family: "Barlow Semi Condensed", sans-serif; font-weight: 700; font-size: 18px; flex: 0 0 auto; }
+.deck-info { flex: 1; min-width: 0; }
+.deck-titulo { font-weight: 600; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.deck-artista { font-size: 12.5px; color: var(--texto-tenue); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.deck-bpm { font-family: "Barlow Semi Condensed", sans-serif; font-weight: 700; font-size: 18px; display: flex; flex-direction: column; align-items: flex-end; line-height: 1.1; }
+.deck-tono { font-size: 12px; color: var(--texto-tenue); font-weight: 600; }
+.deck-onda { width: 100%; height: 70px; border-radius: 8px; background: var(--fondo); cursor: pointer; display: block; }
+.deck-tiempos { display: flex; justify-content: space-between; font-family: "Barlow Semi Condensed", sans-serif; font-size: 14px; color: var(--texto-tenue); font-variant-numeric: tabular-nums; }
+.deck-transporte { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.boton-deck { background: var(--fondo); color: var(--texto); border: 1px solid var(--linea); border-radius: 8px; padding: 8px 10px; font-family: "Barlow Semi Condensed", sans-serif; font-weight: 700; font-size: 13px; cursor: pointer; min-width: 38px; }
+.boton-deck:disabled { opacity: 0.4; cursor: default; }
+.boton-deck--play { font-size: 18px; padding: 8px 16px; background: var(--acento); color: #fff; border-color: var(--acento); }
+.boton-deck--activo { background: var(--ok); color: #062; border-color: var(--ok); }
+.deck-cues, .deck-loops { display: flex; gap: 4px; }
+.boton-cue--set { background: #ffbe0b; color: #3a2a00; border-color: #ffbe0b; }
+.deck-controles { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+.dj-slider { display: flex; flex-direction: column; gap: 4px; font-size: 11px; color: var(--texto-tenue); text-transform: uppercase; letter-spacing: 0.04em; font-family: "Barlow Semi Condensed", sans-serif; }
+.dj-slider-cab { display: flex; justify-content: space-between; align-items: center; gap: 4px; }
+.dj-slider output { color: var(--texto); font-weight: 600; text-transform: none; }
+.dj-slider input[type=range] { width: 100%; accent-color: var(--acento); }
+.boton-kill { font-size: 9px; padding: 1px 5px; border-radius: 5px; border: 1px solid var(--linea); background: transparent; color: var(--texto-tenue); cursor: pointer; text-transform: uppercase; }
+.dj-mezclador { background: var(--panel); border: 1px solid var(--linea); border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 10px; align-items: stretch; }
+.dj-mezclador h3 { margin: 0; font-size: 14px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--texto-tenue); text-align: center; }
+.dj-vus { display: flex; gap: 10px; justify-content: center; flex: 1; min-height: 90px; }
+.dj-vu { width: 14px; background: var(--linea); border-radius: 7px; overflow: hidden; display: flex; align-items: flex-end; }
+.dj-vu-barra { width: 100%; height: 0; background: linear-gradient(0deg, var(--ok), #ffbe0b 70%, var(--peligro)); transition: height 80ms linear; }
+.dj-cross { display: flex; align-items: center; gap: 6px; font-family: "Barlow Semi Condensed", sans-serif; font-weight: 700; }
+.dj-cross input[type=range] { flex: 1; accent-color: var(--peligro); }
+.dj-automix { background: var(--panel); border: 1px solid var(--linea); border-radius: 14px; padding: 10px 12px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.dj-automix--on { border-color: var(--ok); }
+.dj-inline { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--texto-tenue); }
+.dj-inline input[type=number] { padding: 6px 8px; border: 1px solid var(--linea); border-radius: 6px; background: var(--fondo); color: var(--texto); font: inherit; }
+.dj-estado { margin-left: auto; font-size: 13px; color: var(--texto-tenue); font-style: italic; }
+.dj-abajo { display: grid; grid-template-columns: 2fr 1fr; gap: 12px; }
+.dj-biblioteca, .dj-cola { background: var(--panel); border: 1px solid var(--linea); border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 8px; min-height: 200px; }
+.dj-cab { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.dj-cab h3 { margin: 0; font-size: 15px; text-transform: uppercase; letter-spacing: 0.03em; flex: 1; }
+.dj-lista { display: flex; flex-direction: column; gap: 4px; max-height: 420px; overflow-y: auto; }
+.dj-pista { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 8px; border: 1px solid transparent; }
+.dj-pista:hover { background: var(--fondo); border-color: var(--linea); }
+.dj-pista[draggable=true] { cursor: grab; }
+.dj-num { width: 22px; text-align: right; color: var(--texto-tenue); font-family: "Barlow Semi Condensed", sans-serif; font-weight: 700; }
+.dj-pista-texto { flex: 1; min-width: 0; }
+.dj-pista-titulo { font-weight: 600; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dj-pista-sub { font-size: 12px; color: var(--texto-tenue); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dj-pista-acciones { display: flex; gap: 4px; flex: 0 0 auto; }
+.dj-pista-acciones .boton-icono { padding: 6px 8px; font-size: 12px; font-weight: 700; }
+.aviso-flotante { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); background: var(--acento); color: #fff; padding: 10px 16px; border-radius: 10px; font-size: 13px; z-index: 100; max-width: 90vw; }
+@media (max-width: 900px) {
+  .dj-decks { grid-template-columns: 1fr; }
+  .dj-mezclador { flex-direction: row; align-items: center; }
+  .dj-vus { min-height: 40px; flex-direction: row; }
+  .dj-vu { width: 40px; height: 14px; flex-direction: row; }
+  .dj-vu-barra { height: 100% !important; width: 0; }
+  .dj-abajo { grid-template-columns: 1fr; }
+  .deck-controles { grid-template-columns: repeat(3, 1fr); }
+  .marca { flex-wrap: wrap; }
+}

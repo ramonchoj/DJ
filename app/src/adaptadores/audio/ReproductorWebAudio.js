@@ -14,10 +14,10 @@ export class ReproductorWebAudio extends Reproductor {
   #activos = new Map(); // token -> { soundId, bancoId, modo, source, gain, ganancia, inicio, duracion, loop }
   #contador = 0;
 
-  constructor() {
+  constructor({ contexto = null } = {}) {
     super();
     const Ctx = window.AudioContext || window.webkitAudioContext;
-    this.#ctx = new Ctx();
+    this.#ctx = contexto || new Ctx();
     this.#maestro = this.#ctx.createGain();
     this.#maestro.gain.value = 1;
     this.#analizador = this.#ctx.createAnalyser();
@@ -26,6 +26,8 @@ export class ReproductorWebAudio extends Reproductor {
     this.#maestro.connect(this.#analizador);
     this.#analizador.connect(this.#ctx.destination);
   }
+
+  get contexto() { return this.#ctx; }
 
   async reanudar() {
     if (this.#ctx.state === 'suspended') await this.#ctx.resume();
