@@ -89,3 +89,21 @@ test('sin precargaAutomaticaSeg no se precarga nada al cargar', async () => {
   await new Promise((r) => setTimeout(r, 0));
   assert.equal(motor.llamadas.filter((l) => l[0] === 'precargar').length, 0);
 });
+
+test('colocar(): primer deck vacío A, luego B, después la cola', async () => {
+  const motor = new MotorFalso();
+  const dj = new DJAPI({ motor, repositorio: new RepositorioBibliotecaEnMemoria(), analizador: new AnalizadorYouTubeFalso(), importador: null, reloj: new RelojControlado() });
+  await dj.iniciar();
+  const ids = ['dQw4w9WgXcQ', '9bZkp7q19f0', 'kJQP7kiw5Fk'];
+  const pistas = [];
+  for (const id of ids) pistas.push(await dj.importarArchivo({ videoId: id }, id));
+  assert.equal(dj.estado().pistas.length, 3, 'las tres siguen en la biblioteca');
+  assert.equal(await dj.colocar(pistas[0].id), 'A');
+  assert.equal(await dj.colocar(pistas[1].id), 'B');
+  assert.equal(await dj.colocar(pistas[2].id), 'cola');
+  const e = dj.estado();
+  assert.equal(e.decks.A.pista.id, pistas[0].id);
+  assert.equal(e.decks.B.pista.id, pistas[1].id);
+  assert.deepEqual(e.cola.ids, [pistas[2].id]);
+  assert.equal(e.pistas.length, 3);
+});

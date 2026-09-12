@@ -1,6 +1,6 @@
 {
   "name": "cabina",
-  "version": "3.4.1",
+  "version": "3.4.2",
   "description": "Consola de sonidos para fiestas (arquitectura hexagonal, sin dependencias externas)",
   "type": "module",
   "scripts": {

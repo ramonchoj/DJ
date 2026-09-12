@@ -229,7 +229,7 @@ export class UIDJ {
     sec.appendChild(buscar);
     const lista = el('div', 'dj-lista');
     const pistas = this.#dj.buscar(this.#busqueda);
-    if (!pistas.length) lista.appendChild(el('p', 'ayuda', e.pistas.length ? 'Nada coincide.' : (this.#opciones.fuente === 'youtube' ? 'Pega enlaces de YouTube con "+ Enlaces de YouTube" (uno por línea). Se leen título y duración; el video suena en su propio reproductor.' : 'Agrega canciones con "+ Canciones" (mp3, m4a, wav…). Se analizan (BPM, volumen) y quedan guardadas en este dispositivo.')));
+    if (!pistas.length) lista.appendChild(el('p', 'ayuda', e.pistas.length ? 'Nada coincide.' : (this.#opciones.fuente === 'youtube' ? 'Pega un enlace de YouTube arriba y toca Agregar. El primero va al deck A, el segundo al deck B y los demás a la cola; todos quedan aquí en la biblioteca.' : 'Agrega canciones con "+ Canciones" (mp3, m4a, wav…). Se analizan (BPM, volumen) y quedan guardadas en este dispositivo.')));
     for (const p of pistas) {
       const fila = el('div', 'dj-pista');
       fila.draggable = true;
@@ -380,11 +380,17 @@ export class UIDJ {
     (async () => {
       const aviso = this.#aviso(`Leyendo 0/${ids.length}…`);
       let n = 0;
+      const colocadas = [];
       for (const id of ids) {
-        try { await this.#dj.importarArchivo({ videoId: id }, id); } catch (x) { this.#error(x); }
+        try {
+          const p = await this.#dj.importarArchivo({ videoId: id }, id);
+          // Cada video agregado se coloca solo: deck A, luego B, luego la cola.
+          if (this.#opciones.autoColocar) { const d = await this.#dj.colocar(p.id); colocadas.push(d === 'cola' ? `"${p.titulo}" → cola` : `"${p.titulo}" → deck ${d}`); }
+        } catch (x) { this.#error(x); }
         n += 1; aviso.textContent = `Leyendo ${n}/${ids.length}…`;
       }
       aviso.remove();
+      if (colocadas.length) { const fin = this.#aviso(colocadas.join(' · ')); setTimeout(() => fin.remove(), 6000); }
     })();
   }
 

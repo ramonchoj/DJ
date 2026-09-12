@@ -182,6 +182,16 @@ export class DJAPI {
     return this.#decks[deckId];
   }
 
+  /**
+   * Coloca una pista donde haga falta: primer deck vacío (A, luego B) o, si
+   * los dos están ocupados, al final de la cola. Devuelve 'A' | 'B' | 'cola'.
+   */
+  async colocar(pistaId) {
+    for (const id of ['A', 'B']) if (!this.#decks[id].pista) { await this.cargar(id, pistaId); return id; }
+    await this.encolar(pistaId);
+    return 'cola';
+  }
+
   /** Llena el buffer del deck (fuentes en streaming). No toca el estado de reproducción. */
   async precargar(deckId, { segundos = 90 } = {}) {
     const deck = this.#decks[deckId];

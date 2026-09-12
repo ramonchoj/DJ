@@ -20,7 +20,7 @@ import { MotorYouTube } from './yt/adaptadores/MotorYouTube.js';
 import { AnalizadorYouTube } from './yt/adaptadores/AnalizadorYouTube.js';
 import { extraerVideoIds } from './yt/adaptadores/youtube.js';
 
-export const VERSION_APP = '3.4.1';
+export const VERSION_APP = '3.4.2';
 const CLAVE_MODO = 'cabina.modo';
 
 const BANCOS_FABRICA = {
@@ -174,7 +174,7 @@ async function iniciar() {
       window.__djYt = djYt;
       await djYt.iniciar();
       await djYt.fijarBeatmatch(false);
-      const uiYt = new UIDJ(document.getElementById('yt-ui'), djYt, { fuente: 'youtube', extraerIds: extraerVideoIds });
+      const uiYt = new UIDJ(document.getElementById('yt-ui'), djYt, { fuente: 'youtube', extraerIds: extraerVideoIds, autoColocar: true });
       uiYt.render();
       const formYt = document.getElementById('yt-agregar'); const campoYt = document.getElementById('yt-enlace');
       formYt.addEventListener('submit', (ev) => { ev.preventDefault(); const t = campoYt.value; campoYt.value = ''; uiYt.importarEnlaces(t); });
