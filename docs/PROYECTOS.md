@@ -89,3 +89,11 @@ Diseño: tema oscuro por defecto con espejo claro vía `prefers-color-scheme`, t
 Código en `app/` del repo: `src/` (dominio, aplicación, adaptadores), `test/` (48 pruebas), `index.html` (documento completo para desarrollo local), `artifact_body.html` (contenido publicado), `README.md`.
 
 Pendiente (siguiente sesión, si se pide): probar en un celular real conectado a un parlante Bluetooth; agregar más categorías/sonidos propios; considerar V2 (deck de música con playlist).
+
+## 11. Mejora de sonidos: grabaciones reales en vez de síntesis (2026-09-12) — completado
+Se reemplazaron 5 de los 10 sonidos sintetizados por grabaciones reales extraídas de los `.vdjsample` de VirtualDJ (cabecera de 112 bytes + Ogg Vorbis, ver [VIRTUALDJ_ARQUITECTURA_BINARIO.md](VIRTUALDJ_ARQUITECTURA_BINARIO.md) sección 5), convertidas a mp3 para compatibilidad con Safari/iOS: Air Horn, Sirena, Aplausos, Explosión, Risas.
+Se agregaron 4 sonidos de regalo del mismo origen en un banco nuevo "Clásicos": Saxo, Shots, Hands Up, This This This.
+Los 5 sonidos sin equivalente real en VirtualDJ (Redoble, Chiste malo, Correcto, Incorrecto, Algo salió mal) siguen sintetizados por Web Audio.
+`catalogoDeFabrica()` ahora soporta entradas con `archivo` (se descarga como parte de la carga inicial, igual que las tipografías) además de `generar` (síntesis).
+Verificado: 48/48 pruebas en verde, captura de pantalla con las 3 categorías y 14 pads, cabeceras MP3 válidas en los 9 archivos servidos.
+Republicado: https://claude.ai/code/artifact/b1fb97b7-03a1-4c2b-adf3-06a4d05dd523 (versión 2).
