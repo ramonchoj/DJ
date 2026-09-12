@@ -13,7 +13,7 @@ Objetivo: `Recording_65.m4a` (grabación de ~58 minutos, hecha con un Motorola g
 Intento 1 (descartado): huella por croma (chroma CQT) + correlación cruzada — script `identify_mix.py`. Se descartó porque todos los puntajes salían parecidos entre sí (0.67-0.86) sin importar la canción: el método no discriminaba matches reales.
 
 Intento 2 (en curso): huella acústica tipo Shazam — script `fingerprint_mix.py`. Genera un "mapa de constelación" de picos espectrales por canción, arma hashes (f1, f2, Δt) entre pares de picos, y busca esos mismos hashes en la grabación. Un match real se identifica porque muchos hashes coinciden en el mismo desfase temporal (pico agudo en el histograma de offsets), a diferencia de coincidencias al azar que se reparten en muchos offsets distintos.
-Estado: ejecutando en background sobre las 1592 canciones. Puede tardar varias horas por el tamaño de la librería. Resultados en `fingerprint_results.json` (scratchpad de la sesión) al terminar; se resumirán aquí.
+Estado: **completado, sin identificación positiva**. Ver [IDENTIFICACION_RECORDING_65.md](IDENTIFICACION_RECORDING_65.md) para el resultado detallado y las alternativas propuestas. Tardó ~1h54min; la mejor coincidencia (10 hashes de 322,864 posibles) es estadísticamente ruido, no una coincidencia real — probablemente porque es una grabación ambiental de celular, no una captura limpia de la mezcla.
 
 ## 3. Análisis de la competencia (soundboard) — completado
 Ver [ANALISIS_COMPETENCIA_SOUNDBOARD.md](ANALISIS_COMPETENCIA_SOUNDBOARD.md): revisión de Discord Soundboard, Voicemod, Soundpad, MyInstants, Big Button Box y apps genéricas móviles, con tabla comparativa y listado priorizado de features candidatas (imprescindibles, muy recomendables, opcionales).

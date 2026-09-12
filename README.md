@@ -17,6 +17,7 @@ La biblioteca de audio vive en Google Drive (`G:\Mi unidad\Musica fiestas`); est
 | [docs/ARQUITECTURA_NUESTRA_APP.md](docs/ARQUITECTURA_NUESTRA_APP.md) | Propuesta de arquitectura de nuestra app "Cabina": alcance por versiones, hexagonal con archivos concretos, flujo offline y plan de construcción |
 | [docs/ARQUITECTURA_HEXAGONAL.md](docs/ARQUITECTURA_HEXAGONAL.md) | Arquitectura hexagonal propia de la app: dominio, puertos primarios y secundarios, adaptadores, composición, pruebas y evolución |
 | [app/](app/) | Código fuente de Cabina: la consola de sonidos construida, con 48 pruebas automáticas. [Ver publicada](https://claude.ai/code/artifact/b1fb97b7-03a1-4c2b-adf3-06a4d05dd523) |
+| [docs/IDENTIFICACION_RECORDING_65.md](docs/IDENTIFICACION_RECORDING_65.md) | Resultado final del intento de identificar canciones dentro de Recording_65.m4a por huella acústica: sin coincidencias reales, con explicación y alternativas |
 
 ## Regla de trabajo
 
