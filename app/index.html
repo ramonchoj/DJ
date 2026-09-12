@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Cabina — consola de locutor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --fondo: #f4f4f7;
+    --panel: #ffffff;
+    --texto: #1a1a1f;
+    --texto-tenue: #6b6c76;
+    --linea: #e1e1e8;
+    --peligro: #e63946;
+    --peligro-texto: #ffffff;
+    --acento: #3a86ff;
+    --sombra: 0 2px 0 rgba(20,21,26,0.12);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --fondo: #14151a;
+      --panel: #1d1f27;
+      --texto: #f2f2f5;
+      --texto-tenue: #9a9ba6;
+      --linea: #2c2e38;
+      --sombra: 0 2px 0 rgba(0,0,0,0.3);
+    }
+  }
+  :root[data-theme="dark"] {
+    --fondo: #14151a;
+    --panel: #1d1f27;
+    --texto: #f2f2f5;
+    --texto-tenue: #9a9ba6;
+    --linea: #2c2e38;
+    --sombra: 0 2px 0 rgba(0,0,0,0.3);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--fondo);
+    color: var(--texto);
+    font-family: "Work Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    padding-inline: 16px;
+    padding-block: 16px 40px;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    font-variant-numeric: tabular-nums;
+  }
+  h1, h2, .rotulo, .boton-panico, .pad-nombre, .boton-secundario, .boton-agregar, .boton-nuevo-banco {
+    font-family: "Barlow Semi Condensed", system-ui, sans-serif;
+  }
+
+  #cargando { position: fixed; inset: 0; background: var(--fondo); display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 12px; z-index: 50; }
+  #cargando[hidden] { display: none; }
+  #cargando span { font-size: 15px; color: var(--texto-tenue); }
+  .spinner { width: 36px; height: 36px; border: 3px solid var(--linea); border-top-color: var(--acento); border-radius: 50%; animation: girar 0.8s linear infinite; }
+  @keyframes girar { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .spinner { animation-duration: 2s; } }
+
+  .marca { display: flex; align-items: baseline; gap: 8px; margin: 0 0 14px; }
+  .marca .punto { width: 10px; height: 10px; border-radius: 50%; background: var(--peligro); display: inline-block; }
+  .marca h1 { font-size: 22px; font-weight: 700; margin: 0; letter-spacing: 0.01em; }
+  .marca .subt { font-size: 13px; color: var(--texto-tenue); }
+
+  .barra-superior { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 18px; position: sticky; top: 0; background: var(--fondo); padding-block: 8px; z-index: 10; border-bottom: 1px solid var(--linea); }
+  .boton-panico { background: var(--peligro); color: var(--peligro-texto); border: none; border-radius: 10px; padding: 14px 22px; font-size: 17px; font-weight: 700; letter-spacing: 0.03em; text-transform: uppercase; cursor: pointer; box-shadow: var(--sombra); }
+  .boton-panico:active { transform: translateY(2px); box-shadow: none; }
+  .control-volumen { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--texto-tenue); margin-left: auto; font-family: "Barlow Semi Condensed", sans-serif; text-transform: uppercase; letter-spacing: 0.04em; }
+  .control-volumen input[type=range] { width: 110px; accent-color: var(--acento); }
+  .boton-secundario { background: var(--panel); color: var(--texto); border: 1px solid var(--linea); border-radius: 8px; padding: 10px 13px; font-size: 13px; font-weight: 600; cursor: pointer; }
+
+  .bancos { display: flex; flex-direction: column; gap: 20px; }
+  .banco { background: var(--panel); border: 1px solid var(--linea); border-radius: 14px; padding: 14px; border-top: 4px solid var(--color-banco, var(--acento)); }
+  .banco-titulo { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .banco-titulo h2 { font-size: 17px; font-weight: 600; margin: 0; flex: 1; text-transform: uppercase; letter-spacing: 0.03em; }
+  .boton-ruleta, .boton-agregar { background: var(--fondo); color: var(--texto); border: 1px solid var(--linea); border-radius: 8px; padding: 8px 11px; font-size: 13px; font-weight: 600; cursor: pointer; }
+
+  .grilla { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 10px; }
+  .pad { position: relative; aspect-ratio: 1; border: none; border-radius: 12px; color: white; font-weight: 600; font-size: 13.5px; display: flex; align-items: center; justify-content: center; text-align: center; padding: 8px; cursor: pointer; box-shadow: var(--sombra); }
+  .pad:active { transform: translateY(2px); box-shadow: none; }
+  .pad:focus-visible { outline: 3px solid var(--acento); outline-offset: 2px; }
+  .pad-nombre { display: block; line-height: 1.2; overflow-wrap: break-word; }
+  .pad-modo, .pad-tecla { position: absolute; font-size: 10px; font-family: "Barlow Semi Condensed", sans-serif; opacity: 0.9; background: rgba(0,0,0,0.35); border-radius: 5px; padding: 1px 5px; }
+  .pad-modo { top: 5px; right: 5px; }
+  .pad-tecla { top: 5px; left: 5px; }
+  .pad-vacio { background: transparent; border: 2px dashed var(--linea); color: var(--texto-tenue); font-size: 22px; }
+  .pad-vacio:focus-visible { outline: 3px solid var(--acento); outline-offset: -3px; }
+
+  .boton-nuevo-banco { background: transparent; border: 2px dashed var(--linea); color: var(--texto-tenue); border-radius: 14px; padding: 18px; font-size: 15px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; cursor: pointer; width: 100%; }
+
+  .error-flotante { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); background: var(--peligro); color: var(--peligro-texto); padding: 10px 16px; border-radius: 10px; font-size: 13px; z-index: 100; max-width: 90vw; }
+</style>
+</head>
+<body>
+  <div id="cargando">
+    <div class="spinner"></div>
+    <span>Preparando sonidos de fábrica…</span>
+  </div>
+  <div class="marca"><span class="punto" aria-hidden="true"></span><h1>Cabina</h1><span class="subt">consola de locutor</span></div>
+  <div id="app"></div>
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>
