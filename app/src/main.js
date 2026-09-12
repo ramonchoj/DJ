@@ -20,7 +20,7 @@ import { MotorYouTube } from './yt/adaptadores/MotorYouTube.js';
 import { AnalizadorYouTube } from './yt/adaptadores/AnalizadorYouTube.js';
 import { extraerVideoIds } from './yt/adaptadores/youtube.js';
 
-export const VERSION_APP = '3.4.0';
+export const VERSION_APP = '3.4.1';
 const CLAVE_MODO = 'cabina.modo';
 
 const BANCOS_FABRICA = {
@@ -145,6 +145,11 @@ async function iniciar() {
     if (djYt) return;
     const cont = document.getElementById('yt');
     cont.innerHTML = `
+      <form class="yt-agregar" id="yt-agregar">
+        <input id="yt-enlace" type="url" inputmode="url" autocomplete="off" placeholder="Pega aquí un enlace de YouTube y toca Agregar" aria-label="Enlace de YouTube">
+        <button type="submit" class="boton-primario">+ Agregar</button>
+        <span id="yt-estado" class="ayuda" aria-live="polite">Conectando con YouTube…</span>
+      </form>
       <div class="yt-players">
         <div class="yt-player"><div class="yt-etiqueta">Deck A</div><div id="yt-player-a"></div></div>
         <div class="yt-player yt-player--previa"><div class="yt-etiqueta">Vista previa</div><div id="yt-player-previa"></div></div>
@@ -154,7 +159,10 @@ async function iniciar() {
       <div id="yt-ui"></div>`;
     try {
       const motorYt = new MotorYouTube({ contenedorA: document.getElementById('yt-player-a'), contenedorB: document.getElementById('yt-player-b') });
-      await motorYt.preparar();
+      const estadoYt = document.getElementById('yt-estado');
+      // No se bloquea la interfaz: la biblioteca y el campo de enlace sirven aunque los
+      // reproductores tarden (internet lento). Cargar/analizar esperan solos a que estén.
+      motorYt.preparar().then(() => { estadoYt.textContent = ''; }).catch((e) => { estadoYt.textContent = e.message; });
       djYt = new DJAPI({
         motor: motorYt,
         repositorio: new RepositorioBibliotecaIndexedDB({ nombre: 'cabina-yt' }),
@@ -168,6 +176,8 @@ async function iniciar() {
       await djYt.fijarBeatmatch(false);
       const uiYt = new UIDJ(document.getElementById('yt-ui'), djYt, { fuente: 'youtube', extraerIds: extraerVideoIds });
       uiYt.render();
+      const formYt = document.getElementById('yt-agregar'); const campoYt = document.getElementById('yt-enlace');
+      formYt.addEventListener('submit', (ev) => { ev.preventDefault(); const t = campoYt.value; campoYt.value = ''; uiYt.importarEnlaces(t); });
       consola.suscribir(TiposEvento.PAD_DISPARADO, ({ bancoId, soundId }) => {
         const t = consola.estado();
         try {

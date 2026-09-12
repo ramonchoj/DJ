@@ -28,7 +28,8 @@ export class MotorYouTube extends MotorDJ {
     if (this.#listo) return this.#listo;
     this.#listo = (async () => {
       const YT = await cargarApiYouTube();
-      await Promise.all(['A', 'B'].map((id) => new Promise((resolve) => {
+      await Promise.all(['A', 'B'].map((id) => new Promise((resolve, reject) => {
+        setTimeout(() => reject(new Error(`El reproductor ${id} de YouTube no respondió. Revisa la conexión y vuelve a intentar.`)), 30000);
         this.#players[id] = new YT.Player(this.#contenedores[id], {
           width: '100%', height: '100%',
           playerVars: { controls: 1, rel: 0, modestbranding: 1, playsinline: 1, origin: window.location.origin },
@@ -39,7 +40,7 @@ export class MotorYouTube extends MotorDJ {
         });
       })));
       return true;
-    })();
+    })().catch((e) => { this.#listo = null; for (const id of ['A', 'B']) { try { this.#players[id]?.destroy?.(); } catch { /* */ } delete this.#players[id]; } throw e; });
     return this.#listo;
   }
 

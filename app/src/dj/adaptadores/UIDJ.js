@@ -366,8 +366,15 @@ export class UIDJ {
   }
 
   #importarEnlaces() {
-    const texto = prompt('Pega uno o varios enlaces de YouTube (uno por línea):');
-    if (!texto) return;
+    let texto = null;
+    try { texto = prompt('Pega uno o varios enlaces de YouTube (uno por línea):'); } catch { /* prompt bloqueado (webview / iframe) */ }
+    if (texto == null) { this.#raiz.ownerDocument.getElementById('yt-enlace')?.focus(); return; }
+    this.importarEnlaces(texto);
+  }
+
+  /** Importa los enlaces (o ids) que haya en `texto`; uno o varios. */
+  importarEnlaces(texto) {
+    if (!texto || !texto.trim()) return;
     const ids = this.#opciones.extraerIds ? this.#opciones.extraerIds(texto) : [];
     if (!ids.length) { this.#error(new Error('No encontré enlaces de YouTube válidos.')); return; }
     (async () => {

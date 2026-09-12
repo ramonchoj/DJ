@@ -224,6 +224,9 @@ dialog.dlg::backdrop { background: rgba(0,0,0,0.5); }
 /* ======================= modo YouTube ======================= */
 #yt { display: flex; flex-direction: column; gap: 12px; margin-bottom: 18px; }
 #yt[hidden] { display: none; }
+.yt-agregar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; }
+.yt-agregar input { flex: 1 1 260px; min-width: 0; font: inherit; font-size: 16px; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--linea); background: var(--panel); color: inherit; }
+.yt-agregar #yt-estado { flex-basis: 100%; }
 .yt-players { display: grid; grid-template-columns: 1fr 220px 1fr; gap: 12px; }
 .yt-player { background: var(--panel); border: 1px solid var(--linea); border-radius: 14px; padding: 8px; display: flex; flex-direction: column; gap: 6px; }
 .yt-player > div:last-child { aspect-ratio: 16 / 9; min-height: 200px; background: #000; border-radius: 8px; overflow: hidden; }

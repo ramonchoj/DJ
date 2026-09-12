@@ -16,14 +16,15 @@ export class AnalizadorYouTube extends AnalizadorPista {
     if (this.#listo) return this.#listo;
     this.#listo = (async () => {
       const YT = await cargarApiYouTube();
-      await new Promise((resolve) => {
+      await new Promise((resolve, reject) => {
+        setTimeout(() => reject(new Error('La vista previa de YouTube no respondió. Revisa la conexión y vuelve a intentar.')), 30000);
         this.#player = new YT.Player(this.#contenedor, {
           width: '100%', height: '100%',
           playerVars: { controls: 1, rel: 0, modestbranding: 1, playsinline: 1, origin: window.location.origin },
           events: { onReady: () => resolve() },
         });
       });
-    })();
+    })().catch((e) => { this.#listo = null; try { this.#player?.destroy?.(); } catch { /* */ } this.#player = null; throw e; });
     return this.#listo;
   }
 
