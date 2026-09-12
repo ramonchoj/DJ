@@ -58,3 +58,6 @@ Pendiente: cuando el usuario ponga "Payaso de Rodeo" en alguna carpeta, repetir 
 
 ## 6. Repositorio de documentación (2026-09-12)
 Toda la documentación de `notas/` se espeja en GitHub: https://github.com/ramonchoj/DJ (carpeta `docs/`, clon local en `C:\Users\HP\DJ`). El audio se queda en Drive; el repo solo guarda documentos.
+
+## 7. Arquitectura interna del binario de VirtualDJ (2026-09-12) — completado
+Ver [VIRTUALDJ_ARQUITECTURA_BINARIO.md](VIRTUALDJ_ARQUITECTURA_BINARIO.md): análisis PE del exe (C++ nativo x64, MSVC 2022, UI propia sobre Direct3D/Direct2D), capas internas (ASIO/WASAPI, Elastique v3, ffmpeg estático, FFTW, DirectML/CUDA para stems con 410 MB de modelos embebidos), skins XML + VDJScript (~200 verbos, 38 de sampler), SDK de plugins, MSI WiX de 29 archivos, y formato `.vdjsample` = cabecera de 112 bytes + Ogg estándar (reutilizable en la consola web).
