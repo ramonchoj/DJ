@@ -4,7 +4,7 @@
  * No hay manifest: la app NO es instalable, solo abre sin señal.
  * Al cambiar VERSION se descarta el caché anterior en la activación.
  */
-const VERSION = 'cabina-v3.1.1';
+const VERSION = 'cabina-v3.2.0';
 const SHELL = [
   './',
   './index.html',

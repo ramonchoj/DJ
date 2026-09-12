@@ -20,7 +20,7 @@ import { MotorYouTube } from './yt/adaptadores/MotorYouTube.js';
 import { AnalizadorYouTube } from './yt/adaptadores/AnalizadorYouTube.js';
 import { extraerVideoIds } from './yt/adaptadores/youtube.js';
 
-export const VERSION_APP = '3.1.1';
+export const VERSION_APP = '3.2.0';
 const CLAVE_MODO = 'cabina.modo';
 
 const BANCOS_FABRICA = {
@@ -29,6 +29,7 @@ const BANCOS_FABRICA = {
   Clásicos: { color: '#ffbe0b' },
   Reacciones: { color: '#6a4c93' },
   Calle: { color: '#f4a261' },
+  Animales: { color: '#8ac926' },
   Camas: { color: '#457b9d', esCama: true },
 };
 

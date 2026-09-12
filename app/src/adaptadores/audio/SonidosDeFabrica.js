@@ -287,5 +287,24 @@ export function catalogoDeFabrica() {
       { nombre: 'Campana de la basura', modo: 'UN_TIRO', tecla: '5', emoji: '🔔', color: '#2a9d8f', archivo: 'assets/usuario/campana-de-la-basura.mp3', reemplazaA: ['Campana basura'] },
       { nombre: 'Tamales', modo: 'UN_TIRO', tecla: '8', emoji: '🫔', color: '#ffbe0b', archivo: 'assets/voces/tamales.mp3' },
     ],
+    // Para concursos tipo "adivina el animal": el botón 🎲 del banco dispara uno al azar.
+    Animales: [
+      { nombre: 'Perro', modo: 'UN_TIRO', emoji: '🐶', color: '#8ac926', archivo: 'assets/mixkit/animal-perro-51.mp3' },
+      { nombre: 'Gato', modo: 'UN_TIRO', emoji: '🐱', color: '#ffbe0b', archivo: 'assets/mixkit/animal-gato-93.mp3' },
+      { nombre: 'Vaca', modo: 'UN_TIRO', emoji: '🐮', color: '#457b9d', archivo: 'assets/mixkit/animal-vaca-1744.mp3' },
+      { nombre: 'Gallo', modo: 'UN_TIRO', emoji: '🐓', color: '#e63946', archivo: 'assets/mixkit/animal-gallo-2462.mp3' },
+      { nombre: 'Gallina', modo: 'UN_TIRO', emoji: '🐔', color: '#f4a261', archivo: 'assets/mixkit/animal-gallina-1772.mp3' },
+      { nombre: 'Caballo', modo: 'UN_TIRO', emoji: '🐴', color: '#6a4c93', archivo: 'assets/mixkit/animal-caballo-1762.mp3' },
+      { nombre: 'León', modo: 'UN_TIRO', emoji: '🦁', color: '#fb5607', archivo: 'assets/mixkit/animal-leon-95.mp3' },
+      { nombre: 'Mono', modo: 'UN_TIRO', emoji: '🐒', color: '#2a9d8f', archivo: 'assets/mixkit/animal-mono-105.mp3' },
+      { nombre: 'Cerdo', modo: 'UN_TIRO', emoji: '🐷', color: '#ff006e', archivo: 'assets/mixkit/animal-cerdo-3.mp3' },
+      { nombre: 'Lobo', modo: 'UN_TIRO', emoji: '🐺', color: '#264653', archivo: 'assets/mixkit/animal-lobo-1729.mp3' },
+      { nombre: 'Burro', modo: 'UN_TIRO', emoji: '🫏', color: '#8d99ae', archivo: 'assets/mixkit/animal-burro-1770.mp3' },
+      { nombre: 'Oveja', modo: 'UN_TIRO', emoji: '🐑', color: '#3a86ff', archivo: 'assets/mixkit/animal-oveja-1741.mp3' },
+      { nombre: 'Cabra', modo: 'UN_TIRO', emoji: '🐐', color: '#06d6a0', archivo: 'assets/mixkit/animal-cabra-1760.mp3' },
+      { nombre: 'Búho', modo: 'UN_TIRO', emoji: '🦉', color: '#8338ec', archivo: 'assets/mixkit/animal-buho-2479.mp3' },
+      { nombre: 'Abeja', modo: 'UN_TIRO', emoji: '🐝', color: '#ffd60a', archivo: 'assets/mixkit/animal-abeja-1926.mp3' },
+      { nombre: 'Grillo', modo: 'UN_TIRO', emoji: '🦗', color: '#588157', archivo: 'assets/mixkit/animal-grillo-1780.mp3' },
+    ],
   };
 }

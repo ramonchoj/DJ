@@ -25,5 +25,21 @@ Descargados de Mixkit (mixkit.co), gratuitos bajo la [Licencia de Contenido Grat
 | avion-1577.mp3 | 1577 | Avión jet despegando | 10s |
 | wahwah-471.mp3 | 471 | Trombón triste (wah wah, chiste malo) | 5s |
 | remate-568.mp3 | 568 | Remate de chiste (tambor y xilófono) | 3s |
+| animal-perro-51.mp3 | 51 | Perro | |
+| animal-gato-93.mp3 | 93 | Gato | |
+| animal-vaca-1744.mp3 | 1744 | Vaca | |
+| animal-gallo-2462.mp3 | 2462 | Gallo | |
+| animal-gallina-1772.mp3 | 1772 | Gallina | |
+| animal-caballo-1762.mp3 | 1762 | Caballo | |
+| animal-leon-95.mp3 | 95 | León | |
+| animal-mono-105.mp3 | 105 | Mono | |
+| animal-cerdo-3.mp3 | 3 | Cerdo | |
+| animal-lobo-1729.mp3 | 1729 | Lobo | |
+| animal-burro-1770.mp3 | 1770 | Burro | |
+| animal-oveja-1741.mp3 | 1741 | Oveja | |
+| animal-cabra-1760.mp3 | 1760 | Cabra | |
+| animal-buho-2479.mp3 | 2479 | Búho | |
+| animal-abeja-1926.mp3 | 1926 | Abeja | |
+| animal-grillo-1780.mp3 | 1780 | Grillo | |
 
 Fuente: https://mixkit.co/free-sound-effects/ (categorías: applause, laugh, siren, car-horn, boo, crowd-cheering, glass, drum-roll, whistle, countdown, bass-hit, party-horn, firework, fanfare, ta-da)
