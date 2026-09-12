@@ -20,7 +20,7 @@ import { MotorYouTube } from './yt/adaptadores/MotorYouTube.js';
 import { AnalizadorYouTube } from './yt/adaptadores/AnalizadorYouTube.js';
 import { extraerVideoIds } from './yt/adaptadores/youtube.js';
 
-export const VERSION_APP = '3.1.0';
+export const VERSION_APP = '3.1.1';
 const CLAVE_MODO = 'cabina.modo';
 
 const BANCOS_FABRICA = {
@@ -45,7 +45,15 @@ async function instalarSonidosDeFabrica(consola) {
     if (!banco) continue;
     let slot = 0;
     for (const def of sonidos) {
-      const yaExiste = banco.listaSonidos().some((s) => s.nombre === def.nombre);
+      // Un sonido de fábrica puede reemplazar a otro anterior (p. ej. una
+      // grabación real que sustituye a uno sintetizado): se borra el viejo
+      // solo si sigue siendo de fábrica (si el usuario lo editó, se respeta).
+      for (const viejo of def.reemplazaA || []) {
+        const s = tablero.bancoPorNombre(nombreBanco)?.listaSonidos().find((x) => x.nombre === viejo && x.origen === 'FABRICA');
+        if (s) tablero = await consola.eliminarSonido(s.id);
+      }
+      const bancoActual = tablero.bancoPorNombre(nombreBanco);
+      const yaExiste = bancoActual.listaSonidos().some((s) => s.nombre === def.nombre);
       if (yaExiste) { slot++; continue; }
       let blob;
       if (def.archivo) {
@@ -56,7 +64,7 @@ async function instalarSonidosDeFabrica(consola) {
         blob = audioBufferAWav(buffer);
       }
       tablero = await consola.agregarSonido({
-        bancoId: banco.id, slot, nombre: def.nombre, blob,
+        bancoId: bancoActual.id, slot: bancoActual.sonidoEn(slot) ? bancoActual.primerSlotLibre() : slot, nombre: def.nombre, blob,
         modo: def.modo, color: def.color, emoji: def.emoji, teclaRapida: def.tecla, origen: 'FABRICA',
       });
       slot++;

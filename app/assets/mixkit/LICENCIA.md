@@ -25,6 +25,5 @@ Descargados de Mixkit (mixkit.co), gratuitos bajo la [Licencia de Contenido Grat
 | avion-1577.mp3 | 1577 | Avión jet despegando | 10s |
 | wahwah-471.mp3 | 471 | Trombón triste (wah wah, chiste malo) | 5s |
 | remate-568.mp3 | 568 | Remate de chiste (tambor y xilófono) | 3s |
-| campana-basura-sintetizada.mp3 | — | Campana de mano (camión de la basura), **sintetizada por nosotros** (no es de Mixkit) | 3.2s |
 
 Fuente: https://mixkit.co/free-sound-effects/ (categorías: applause, laugh, siren, car-horn, boo, crowd-cheering, glass, drum-roll, whistle, countdown, bass-hit, party-horn, firework, fanfare, ta-da)

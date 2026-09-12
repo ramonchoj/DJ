@@ -283,8 +283,8 @@ export function catalogoDeFabrica() {
       { nombre: 'Automóvil', modo: 'UN_TIRO', tecla: '1', emoji: '🚗', color: '#3a86ff', archivo: 'assets/mixkit/auto-1538.mp3' },
       { nombre: 'Moto', modo: 'UN_TIRO', tecla: '2', emoji: '🏍️', color: '#fb5607', archivo: 'assets/mixkit/moto-2732.mp3' },
       { nombre: 'Avión', modo: 'UN_TIRO', tecla: '3', emoji: '✈️', color: '#457b9d', archivo: 'assets/mixkit/avion-1577.mp3' },
-      { nombre: 'Fierro viejo', modo: 'UN_TIRO', tecla: '4', emoji: '📢', color: '#e63946', archivo: 'assets/voces/fierro-viejo.mp3' },
-      { nombre: 'Campana basura', modo: 'UN_TIRO', tecla: '5', emoji: '🔔', color: '#2a9d8f', archivo: 'assets/mixkit/campana-basura-sintetizada.mp3' },
+      { nombre: 'Se compran colchones', modo: 'UN_TIRO', tecla: '4', emoji: '📢', color: '#e63946', archivo: 'assets/usuario/se-compran-colchones.mp3', reemplazaA: ['Fierro viejo'] },
+      { nombre: 'Campana de la basura', modo: 'UN_TIRO', tecla: '5', emoji: '🔔', color: '#2a9d8f', archivo: 'assets/usuario/campana-de-la-basura.mp3', reemplazaA: ['Campana basura'] },
       { nombre: 'Tamales', modo: 'UN_TIRO', tecla: '8', emoji: '🫔', color: '#ffbe0b', archivo: 'assets/voces/tamales.mp3' },
     ],
   };
