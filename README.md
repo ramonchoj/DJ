@@ -12,6 +12,7 @@ La biblioteca de audio vive en Google Drive (`G:\Mi unidad\Musica fiestas`); est
 | [docs/ANALISIS_COMPETENCIA_SOUNDBOARD.md](docs/ANALISIS_COMPETENCIA_SOUNDBOARD.md) | Comparativa de apps de soundboard (Discord, Voicemod, Soundpad, MyInstants, Big Button Box) y listado priorizado de features |
 | [docs/LENGUAJE_Y_FEATURES_RADIO.md](docs/LENGUAJE_Y_FEATURES_RADIO.md) | Vocabulario real de cabina de radio, sonidos más usados y features priorizados por diversión y uso |
 | [docs/RANKINGS_GLOBALES.md](docs/RANKINGS_GLOBALES.md) | Top 50 global de Spotify y líderes de charts Latin, Tropical y Rock (septiembre 2026) |
+| [docs/VIRTUALDJ_ARQUITECTURA.md](docs/VIRTUALDJ_ARQUITECTURA.md) | Inventario de la instalación de VirtualDJ: estructura de datos (database.xml, settings, sampler, historial) y qué reutilizar |
 
 ## Regla de trabajo
 
