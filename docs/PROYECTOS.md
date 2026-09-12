@@ -55,3 +55,6 @@ BPM y tono detectados (librosa, ventana 30s-150s):
 Método (script `mix_two.py`, scratchpad): Que Pasa se estira con atempo 0.9048 (136→123 BPM) para sincronizar tempo; corte de A en el beat más cercano a 24 s antes de su final (261.1 s); B arranca en su primer beat (0.77 s ya estirado); ambas normalizadas a -14 LUFS (loudnorm); crossfade triangular de 16 s (acrossfade). Salida 44.1 kHz, 320 kbps.
 Resultado: `Mezclas generadas/Caballo Dorado x Que Pasa (123 bpm, crossfade 16s).mp3` — 8:40 min, 20.8 MB. Empalme en 4:21-4:37.
 Pendiente: cuando el usuario ponga "Payaso de Rodeo" en alguna carpeta, repetir la mezcla con esa canción.
+
+## 6. Repositorio de documentación (2026-09-12)
+Toda la documentación de `notas/` se espeja en GitHub: https://github.com/ramonchoj/DJ (carpeta `docs/`, clon local en `C:\Users\HP\DJ`). El audio se queda en Drive; el repo solo guarda documentos.
