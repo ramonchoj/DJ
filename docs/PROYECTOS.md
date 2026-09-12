@@ -62,5 +62,8 @@ Toda la documentación de `notas/` se espeja en GitHub: https://github.com/ramon
 ## 7. Arquitectura interna del binario de VirtualDJ (2026-09-12) — completado
 Ver [VIRTUALDJ_ARQUITECTURA_BINARIO.md](VIRTUALDJ_ARQUITECTURA_BINARIO.md): análisis PE del exe (C++ nativo x64, MSVC 2022, UI propia sobre Direct3D/Direct2D), capas internas (ASIO/WASAPI, Elastique v3, ffmpeg estático, FFTW, DirectML/CUDA para stems con 410 MB de modelos embebidos), skins XML + VDJScript (~200 verbos, 38 de sampler), SDK de plugins, MSI WiX de 29 archivos, y formato `.vdjsample` = cabecera de 112 bytes + Ogg estándar (reutilizable en la consola web).
 
-## 8. Propuesta de arquitectura de nuestra app "Cabina" (2026-09-12) — en revisión
+## 8. Propuesta de arquitectura de nuestra app "Cabina" (2026-09-12) — superada por el punto 9
 Ver [ARQUITECTURA_NUESTRA_APP.md](ARQUITECTURA_NUESTRA_APP.md): qué copiamos de VirtualDJ y qué no, alcance por versiones (V1 consola de locutor, V2 deck de playlist con automix, V3 dos decks), estructura hexagonal con archivos concretos (domain / application / adapters), flujo de uso offline, decisiones técnicas y plan de construcción en 6 pasos. Pendiente: decidir aspecto visual, sonidos de fábrica, categorías iniciales y nombre.
+
+## 9. Arquitectura hexagonal propia (2026-09-12) — en revisión
+Ver [ARQUITECTURA_HEXAGONAL.md](ARQUITECTURA_HEXAGONAL.md): diseño desde cero (sin heredar de VirtualDJ) con regla de dependencias, mapa del hexágono (mermaid), dominio (Tablero/Banco/Sonido, valores ModoDisparo/Ganancia/TeclaRapida, eventos, servicios), puertos primarios (ConsolaAPI) y secundarios (RepositorioTablero, Reproductor, AnalizadorAudio, Empaquetador, Reloj), adaptadores, raíz de composición, carpetas, estrategia de pruebas, offline y evolución a mezclador.

@@ -15,6 +15,7 @@ La biblioteca de audio vive en Google Drive (`G:\Mi unidad\Musica fiestas`); est
 | [docs/VIRTUALDJ_ARQUITECTURA.md](docs/VIRTUALDJ_ARQUITECTURA.md) | Inventario de la instalación de VirtualDJ: estructura de datos (database.xml, settings, sampler, historial) y qué reutilizar |
 | [docs/VIRTUALDJ_ARQUITECTURA_BINARIO.md](docs/VIRTUALDJ_ARQUITECTURA_BINARIO.md) | Arquitectura interna del ejecutable: PE, motor de audio (ASIO/WASAPI, Elastique, ffmpeg), stems con DirectML/CUDA, skins XML + VDJScript, plugins, MSI y formato .vdjsample |
 | [docs/ARQUITECTURA_NUESTRA_APP.md](docs/ARQUITECTURA_NUESTRA_APP.md) | Propuesta de arquitectura de nuestra app "Cabina": alcance por versiones, hexagonal con archivos concretos, flujo offline y plan de construcción |
+| [docs/ARQUITECTURA_HEXAGONAL.md](docs/ARQUITECTURA_HEXAGONAL.md) | Arquitectura hexagonal propia de la app: dominio, puertos primarios y secundarios, adaptadores, composición, pruebas y evolución |
 
 ## Regla de trabajo
 
