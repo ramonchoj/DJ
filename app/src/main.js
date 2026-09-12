@@ -8,20 +8,28 @@ import { UITactil } from './adaptadores/ui/UITactil.js';
 import { AdaptadorTeclado } from './adaptadores/teclado/AdaptadorTeclado.js';
 import { catalogoDeFabrica, audioBufferAWav } from './adaptadores/audio/SonidosDeFabrica.js';
 
+const COLOR_BANCO = { Golpes: '#e63946', Efectos: '#2a9d8f', Clásicos: '#ffbe0b' };
+
 async function instalarSonidosDeFabrica(consola) {
   const catalogo = catalogoDeFabrica();
   let tablero = consola.estado();
   for (const [nombreBanco, sonidos] of Object.entries(catalogo)) {
     if (!tablero.bancoPorNombre(nombreBanco)) {
-      tablero = await consola.crearBanco(nombreBanco, nombreBanco === 'Golpes' ? '#e63946' : '#2a9d8f');
+      tablero = await consola.crearBanco(nombreBanco, COLOR_BANCO[nombreBanco] || '#3a86ff');
     }
     const banco = tablero.bancoPorNombre(nombreBanco);
     let slot = 0;
     for (const def of sonidos) {
       const yaExiste = banco.listaSonidos().some((s) => s.nombre === def.nombre);
       if (yaExiste) { slot++; continue; }
-      const buffer = await def.generar();
-      const blob = audioBufferAWav(buffer);
+      let blob;
+      if (def.archivo) {
+        const respuesta = await fetch(def.archivo);
+        blob = await respuesta.blob();
+      } else {
+        const buffer = await def.generar();
+        blob = audioBufferAWav(buffer);
+      }
       tablero = await consola.agregarSonido({
         bancoId: banco.id,
         slot,

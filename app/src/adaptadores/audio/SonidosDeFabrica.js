@@ -234,8 +234,12 @@ export function audioBufferAWav(buffer) {
 
 /**
  * Catálogo de sonidos de fábrica, organizado por banco (categorías reales
- * de radio: Golpes, Efectos, Camas). Cada entrada: nombre, modo y una
- * función generadora perezosa (solo se sintetiza si el usuario la usa).
+ * de radio: Golpes, Efectos, Clásicos). Cada entrada trae, o bien `generar`
+ * (función que sintetiza el audio en el navegador, sin archivos), o bien
+ * `archivo` (ruta a una grabación real incluida con la app — los 9 samples
+ * originales de VirtualDJ, ver notas/VIRTUALDJ_ARQUITECTURA_BINARIO.md).
+ * Se prefiere `archivo` cuando existe una grabación real equivalente: suena
+ * mucho más natural que la síntesis por osciladores.
  */
 export function catalogoDeFabrica() {
   return {
@@ -247,11 +251,17 @@ export function catalogoDeFabrica() {
       { nombre: 'Algo salió mal', modo: 'UN_TIRO', tecla: 'S', color: '#8338ec', generar: frenadoDeDisco },
     ],
     Efectos: [
-      { nombre: 'Air Horn', modo: 'UN_TIRO', tecla: 'A', color: '#fb5607', generar: airHorn },
-      { nombre: 'Sirena', modo: 'UN_TIRO', tecla: 'I', color: '#3a86ff', generar: sirena },
-      { nombre: 'Aplausos', modo: 'UN_TIRO', tecla: 'P', color: '#2a9d8f', generar: aplausos },
-      { nombre: 'Explosión', modo: 'UN_TIRO', tecla: 'E', color: '#ff006e', generar: explosion },
-      { nombre: 'Risas', modo: 'UN_TIRO', tecla: 'L', color: '#ffbe0b', generar: risa },
+      { nombre: 'Air Horn', modo: 'UN_TIRO', tecla: 'A', color: '#fb5607', archivo: 'assets/vdj/air-horn.mp3' },
+      { nombre: 'Sirena', modo: 'UN_TIRO', tecla: 'I', color: '#3a86ff', archivo: 'assets/vdj/sirena.mp3' },
+      { nombre: 'Aplausos', modo: 'UN_TIRO', tecla: 'P', color: '#2a9d8f', archivo: 'assets/vdj/aplausos.mp3' },
+      { nombre: 'Explosión', modo: 'UN_TIRO', tecla: 'E', color: '#ff006e', archivo: 'assets/vdj/explosion.mp3' },
+      { nombre: 'Risas', modo: 'UN_TIRO', tecla: 'L', color: '#ffbe0b', archivo: 'assets/vdj/risas.mp3' },
+    ],
+    Clásicos: [
+      { nombre: 'Saxo', modo: 'UN_TIRO', tecla: 'Z', color: '#8ac926', archivo: 'assets/vdj/saxo.mp3' },
+      { nombre: 'Shots', modo: 'UN_TIRO', tecla: 'H', color: '#ff6b6b', archivo: 'assets/vdj/shots.mp3' },
+      { nombre: 'Hands Up', modo: 'UN_TIRO', tecla: 'U', color: '#06d6a0', archivo: 'assets/vdj/hands-up.mp3' },
+      { nombre: 'This This This', modo: 'UN_TIRO', tecla: 'T', color: '#ffbe0b', archivo: 'assets/vdj/this-this-this.mp3' },
     ],
   };
 }
