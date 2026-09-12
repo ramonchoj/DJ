@@ -14,6 +14,7 @@ La biblioteca de audio vive en Google Drive (`G:\Mi unidad\Musica fiestas`); est
 | [docs/RANKINGS_GLOBALES.md](docs/RANKINGS_GLOBALES.md) | Top 50 global de Spotify y líderes de charts Latin, Tropical y Rock (septiembre 2026) |
 | [docs/VIRTUALDJ_ARQUITECTURA.md](docs/VIRTUALDJ_ARQUITECTURA.md) | Inventario de la instalación de VirtualDJ: estructura de datos (database.xml, settings, sampler, historial) y qué reutilizar |
 | [docs/VIRTUALDJ_ARQUITECTURA_BINARIO.md](docs/VIRTUALDJ_ARQUITECTURA_BINARIO.md) | Arquitectura interna del ejecutable: PE, motor de audio (ASIO/WASAPI, Elastique, ffmpeg), stems con DirectML/CUDA, skins XML + VDJScript, plugins, MSI y formato .vdjsample |
+| [docs/ARQUITECTURA_NUESTRA_APP.md](docs/ARQUITECTURA_NUESTRA_APP.md) | Propuesta de arquitectura de nuestra app "Cabina": alcance por versiones, hexagonal con archivos concretos, flujo offline y plan de construcción |
 
 ## Regla de trabajo
 
