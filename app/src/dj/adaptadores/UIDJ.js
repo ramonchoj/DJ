@@ -74,6 +74,7 @@ export class UIDJ {
 
     const tiempos = el('div', 'deck-tiempos');
     tiempos.appendChild(el('span', 'deck-pos', '0:00'));
+    if (esYt) tiempos.appendChild(el('span', 'deck-buffer', ''));
     tiempos.appendChild(el('span', 'deck-rest', d.pista ? `-${fmt(d.pista.duracionSeg)}` : ''));
     sec.appendChild(tiempos);
 
@@ -103,6 +104,11 @@ export class UIDJ {
     const sync = el('button', 'boton-deck', 'SYNC'); sync.title = 'Igualar BPM al otro deck'; sync.disabled = !d.pista || !e.decks[id === 'A' ? 'B' : 'A'].pista;
     sync.onclick = () => this.#dj.sincronizar(id);
     transporte.appendChild(sync);
+    if (esYt) {
+      const pre = el('button', 'boton-deck', '⏬'); pre.title = 'Precargar: llena el buffer (internet lento) sin que suene'; pre.disabled = !d.pista || d.sonando;
+      pre.onclick = () => { pre.disabled = true; this.#dj.precargar(id, { segundos: 120 }).catch((x) => this.#error(x)).finally(() => { pre.disabled = false; }); };
+      transporte.appendChild(pre);
+    }
     const eject = el('button', 'boton-deck', '⏏'); eject.title = 'Descargar'; eject.disabled = !d.pista;
     eject.onclick = () => this.#dj.descargar(id).catch((x) => this.#error(x));
     transporte.appendChild(eject);
@@ -295,7 +301,13 @@ export class UIDJ {
         const pos = this.#dj.posicion(id);
         sec.querySelector('.deck-pos').textContent = fmt(pos);
         sec.querySelector('.deck-rest').textContent = d.pista ? `-${fmt(d.pista.duracionSeg - pos)}` : '';
-        if (this.#opciones.fuente === 'youtube') { const b = sec.querySelector('.deck-onda--barra'); if (b && d.pista) b.style.setProperty('--p', String(Math.min(1, pos / (d.pista.duracionSeg || 1)))); } else this.#dibujarOnda(id, d, pos);
+        if (this.#opciones.fuente === 'youtube') {
+          const b = sec.querySelector('.deck-onda--barra');
+          const buf = this.#dj.precarga(id);
+          if (b && d.pista) { b.style.setProperty('--p', String(Math.min(1, pos / (d.pista.duracionSeg || 1)))); b.style.setProperty('--b', String(buf.fraccion)); }
+          const tb = sec.querySelector('.deck-buffer');
+          if (tb) tb.textContent = d.pista ? (buf.fraccion >= 0.995 ? '⏬ completo' : buf.segundos ? `⏬ ${buf.segundos}s en buffer` : '') : '';
+        } else this.#dibujarOnda(id, d, pos);
         const rec = this.#raiz.querySelector('.dj-rec-tiempo');
         if (rec) rec.textContent = fmt(this.#dj.duracionGrabacionSeg());
         const vu = this.#raiz.querySelector(`.dj-vu--${id} .dj-vu-barra`);

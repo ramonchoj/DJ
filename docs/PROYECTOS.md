@@ -158,3 +158,10 @@ El usuario entregó dos mp3 propios. Procesados con ffmpeg (recorte de silencios
 - `assets/usuario/fanfarrias.mp3` (26 s) sustituye al pad "Fanfarria" de Mixkit (banco Golpes, tecla V) mediante `reemplazaA`; se borró `fanfare-722.mp3`.
 - `assets/usuario/queremos-pastel.mp3` (75 s, fade final de 1 s) es el pad nuevo "Queremos pastel" 🎂 (banco Reacciones, tecla 9). Por su duración conviene cortarlo con "Detener todo" cuando el pastel ya salió.
 110/110 pruebas. Desplegado en producción y en el Artifact.
+
+## 23. Precarga (buffer) en modo YouTube para internet lento (2026-09-12) — v3.4.0
+**Hallazgo:** el IFrame Player de YouTube no tiene API de "prefetch"; solo llena el buffer mientras reproduce y `getVideoLoadedFraction()` dice cuánto hay. `setPlaybackQuality` ya no hace nada (YouTube elige la calidad por tamaño del reproductor).
+**Solución:** puerto `MotorDJ.precargar(deck, {segundos})` / `precarga(deck)` (opcional, por defecto 0). `MotorYouTube.precargar` toca el video en silencio (volumen 0 + mute, sin marcar "sonando", VU en 0) hasta tener N segundos en buffer o todo el video, y regresa en pausa al punto de partida; si el usuario da play/pausa mientras tanto, se cancela sin estorbar (`#cancelarPrecarga`). `DJAPI` recibe `precargaAutomaticaSeg` (main.js: 90 s al cargar en el deck) y expone `precargar`/`precarga`; nunca precarga un deck que está sonando.
+**UI:** barra de progreso con capa tenue = buffer (`--b`), texto "⏬ 45s en buffer" / "⏬ completo", botón ⏬ en cada deck (pide 120 s más).
+**Uso con internet lento:** pega los enlaces con "+ Enlaces de YouTube", carga cada video en su deck con ▶A / ▶B y espera a que la barra tenue avance antes de la fiesta; con ⏬ se llena más. Nota: YouTube limita cuánto guarda por adelantado (varios minutos, no siempre el video completo).
+**Pruebas:** 112/112 (2 nuevas en test/dj/youtube.test.js). La API de YouTube no carga en los navegadores automatizados de esta máquina (patchright ni agent-browser), así que la verificación en vivo queda pendiente del usuario.

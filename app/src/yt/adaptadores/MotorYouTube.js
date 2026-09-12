@@ -21,7 +21,7 @@ export class MotorYouTube extends MotorDJ {
   constructor({ contenedorA, contenedorB }) {
     super();
     this.#contenedores = { A: contenedorA, B: contenedorB };
-    for (const id of ['A', 'B']) this.#estado[id] = { videoId: null, duracion: 0, volumen: 1, ganancia: 1, tasa: 1, sonando: false, tasasDisponibles: null };
+    for (const id of ['A', 'B']) this.#estado[id] = { videoId: null, duracion: 0, volumen: 1, ganancia: 1, tasa: 1, sonando: false, tasasDisponibles: null, precargando: false };
   }
 
   async preparar() {
@@ -46,13 +46,14 @@ export class MotorYouTube extends MotorDJ {
   #alCambiarEstado(id, estado) {
     const e = this.#estado[id];
     const YT = window.YT;
-    if (estado === YT.PlayerState.PLAYING) { e.sonando = true; if (!e.duracion) e.duracion = this.#players[id].getDuration() || 0; }
+    if (estado === YT.PlayerState.PLAYING) { if (!e.precargando) e.sonando = true; if (!e.duracion) e.duracion = this.#players[id].getDuration() || 0; }
     if (estado === YT.PlayerState.PAUSED) e.sonando = false;
     if (estado === YT.PlayerState.ENDED) { e.sonando = false; this.#cbTerminar?.(id); }
   }
 
   #volumenFinal(id) {
     const e = this.#estado[id];
+    if (e.precargando) return 0;
     return Math.round(Math.max(0, Math.min(1, e.volumen * e.ganancia * this.#cross[id] * this.#duck)) * 100);
   }
 
@@ -92,12 +93,49 @@ export class MotorYouTube extends MotorDJ {
 
   reproducir(id, desdeSeg) {
     const p = this.#players[id]; if (!p || !this.#estado[id].videoId) return;
+    this.#cancelarPrecarga(id);
     if (desdeSeg != null) p.seekTo(desdeSeg, true);
     p.playVideo();
     this.#estado[id].sonando = true;
   }
 
-  pausar(id) { const p = this.#players[id]; if (!p) return; p.pauseVideo(); this.#estado[id].sonando = false; }
+  pausar(id) { const p = this.#players[id]; if (!p) return; this.#cancelarPrecarga(id); p.pauseVideo(); this.#estado[id].sonando = false; }
+
+  /**
+   * Precarga para internet lento. YouTube solo llena el buffer mientras
+   * reproduce, así que se toca en silencio (volumen 0 + mute) hasta tener
+   * `segundos` cargados (o todo el video), y se regresa al punto de partida en
+   * pausa. Si el usuario da play o pausa mientras tanto, la precarga se
+   * cancela sin estorbar.
+   */
+  async precargar(id, { segundos = 90, maxMs = 180000 } = {}) {
+    const p = this.#players[id]; const e = this.#estado[id];
+    if (!p || !e.videoId || e.sonando || e.precargando) return this.precarga(id);
+    const dur = this.duracion(id) || 0;
+    const objetivo = dur ? Math.min(1, segundos / dur) : 1;
+    if ((p.getVideoLoadedFraction?.() || 0) >= objetivo - 0.005) return this.precarga(id);
+    const inicio = this.posicion(id);
+    e.precargando = true; this.#aplicarVolumen(id); p.mute?.(); p.playVideo();
+    const t0 = performance.now();
+    await new Promise((resolve) => {
+      const iv = setInterval(() => {
+        const f = p.getVideoLoadedFraction?.() || 0;
+        if (!e.precargando || f >= objetivo - 0.005 || performance.now() - t0 > maxMs) { clearInterval(iv); resolve(); }
+      }, 300);
+    });
+    if (e.precargando) { p.pauseVideo(); p.seekTo(inicio, true); e.precargando = false; e.sonando = false; p.unMute?.(); this.#aplicarVolumen(id); }
+    return this.precarga(id);
+  }
+
+  precarga(id) {
+    const f = Math.max(0, Math.min(1, this.#players[id]?.getVideoLoadedFraction?.() || 0));
+    return { fraccion: f, segundos: Math.round(f * this.duracion(id)) };
+  }
+
+  #cancelarPrecarga(id) {
+    const e = this.#estado[id]; if (!e.precargando) return;
+    e.precargando = false; this.#players[id]?.unMute?.(); this.#aplicarVolumen(id);
+  }
   saltar(id, seg) { this.#players[id]?.seekTo(Math.max(0, seg), true); }
   posicion(id) { return this.#players[id]?.getCurrentTime?.() || 0; }
   duracion(id) { return this.#estado[id].duracion || this.#players[id]?.getDuration?.() || 0; }
@@ -161,6 +199,6 @@ export class MotorYouTube extends MotorDJ {
   }
 
   formaDeOnda() { return new Float32Array(0); }
-  nivel(id) { return this.#estado[id].sonando ? 0.35 * this.#cross[id] * this.#duck : 0; }
+  nivel(id) { const e = this.#estado[id]; return e.sonando && !e.precargando ? 0.35 * this.#cross[id] * this.#duck : 0; }
   alTerminar(cb) { this.#cbTerminar = cb; }
 }

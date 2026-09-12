@@ -36,8 +36,11 @@ export class DJAPI {
   #transicion = null; // { desde, hacia, inicioMs, duracionMs }
   #historial = [];
 
-  constructor({ motor, repositorio, analizador, importador = null, reloj, grabadorSesion = null }) {
+  #precargaAutomaticaSeg = 0;
+
+  constructor({ motor, repositorio, analizador, importador = null, reloj, grabadorSesion = null, precargaAutomaticaSeg = 0 }) {
     this.motor = motor;
+    this.#precargaAutomaticaSeg = precargaAutomaticaSeg;
     this.grabadorSesion = grabadorSesion;
     this.repositorio = repositorio;
     this.analizador = analizador;
@@ -174,8 +177,22 @@ export class DJAPI {
     const pm = puntosDeMezcla(pistaConDuracion, { fadeSeg: this.#fadeSeg });
     if (pm.inicioReal > 0) this.motor.saltar(deckId, pm.inicioReal);
     this.#bus.publicar(EventosDJ.DECK_CAMBIADO, { deckId });
+    // Internet lento: empezar a llenar el buffer en cuanto la pista está en el deck.
+    if (this.#precargaAutomaticaSeg > 0) this.precargar(deckId, { segundos: this.#precargaAutomaticaSeg }).catch(() => {});
     return this.#decks[deckId];
   }
+
+  /** Llena el buffer del deck (fuentes en streaming). No toca el estado de reproducción. */
+  async precargar(deckId, { segundos = 90 } = {}) {
+    const deck = this.#decks[deckId];
+    if (!deck.pista) throw new ErrorValidacion(`El deck ${deckId} no tiene pista`);
+    if (deck.sonando) return this.precarga(deckId);
+    const r = await this.motor.precargar(deckId, { segundos });
+    this.#bus.publicar(EventosDJ.DECK_CAMBIADO, { deckId });
+    return r;
+  }
+
+  precarga(deckId) { return this.#decks[deckId].pista ? this.motor.precarga(deckId) : { segundos: 0, fraccion: 0 }; }
 
   async descargar(deckId) {
     this.motor.pausar(deckId);

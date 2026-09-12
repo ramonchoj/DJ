@@ -20,7 +20,7 @@ import { MotorYouTube } from './yt/adaptadores/MotorYouTube.js';
 import { AnalizadorYouTube } from './yt/adaptadores/AnalizadorYouTube.js';
 import { extraerVideoIds } from './yt/adaptadores/youtube.js';
 
-export const VERSION_APP = '3.3.0';
+export const VERSION_APP = '3.4.0';
 const CLAVE_MODO = 'cabina.modo';
 
 const BANCOS_FABRICA = {
@@ -150,7 +150,7 @@ async function iniciar() {
         <div class="yt-player yt-player--previa"><div class="yt-etiqueta">Vista previa</div><div id="yt-player-previa"></div></div>
         <div class="yt-player"><div class="yt-etiqueta">Deck B</div><div id="yt-player-b"></div></div>
       </div>
-      <p class="ayuda yt-nota">Los videos suenan en sus propios reproductores de YouTube (se necesita internet). Sin EQ ni forma de onda: el audio no sale de YouTube. Tempo solo en los pasos que permite YouTube.</p>
+      <p class="ayuda yt-nota">Los videos suenan en sus propios reproductores de YouTube (se necesita internet). Sin EQ ni forma de onda: el audio no sale de YouTube. Tempo solo en los pasos que permite YouTube. Al cargar un video en un deck se precargan ~90 s en silencio (barra tenue = buffer); con ⏬ se piden 2 min más.</p>
       <div id="yt-ui"></div>`;
     try {
       const motorYt = new MotorYouTube({ contenedorA: document.getElementById('yt-player-a'), contenedorB: document.getElementById('yt-player-b') });
@@ -161,6 +161,7 @@ async function iniciar() {
         analizador: new AnalizadorYouTube({ contenedor: document.getElementById('yt-player-previa') }),
         importador: null,
         reloj: { ahora: () => Date.now() },
+        precargaAutomaticaSeg: 90, // internet lento: llenar buffer al cargar en el deck
       });
       window.__djYt = djYt;
       await djYt.iniciar();

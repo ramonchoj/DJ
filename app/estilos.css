@@ -232,6 +232,8 @@ dialog.dlg::backdrop { background: rgba(0,0,0,0.5); }
 .yt-etiqueta { font-family: "Barlow Semi Condensed", sans-serif; font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--texto-tenue); }
 .yt-nota { margin: 0; }
 .deck-onda--barra { height: 10px; min-height: 10px; background: var(--fondo); border-radius: 6px; position: relative; overflow: hidden; cursor: pointer; }
+.deck-onda--barra::before { content: ""; position: absolute; inset: 0; width: calc(var(--b, 0) * 100%); background: var(--onda-color); opacity: .28; }
 .deck-onda--barra::after { content: ""; position: absolute; inset: 0; width: calc(var(--p, 0) * 100%); background: var(--onda-color); }
+.deck-buffer { font-size: 12px; opacity: .8; }
 .deck-controles--yt { grid-template-columns: 1fr; }
 @media (max-width: 900px) { .yt-players { grid-template-columns: 1fr; } .yt-player--previa > div:last-child { aspect-ratio: 16 / 9; } }

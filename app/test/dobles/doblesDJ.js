@@ -10,7 +10,7 @@ export class MotorFalso extends MotorDJ {
     this.llamadas = [];
     this.cbTerminar = null;
   }
-  #nuevo() { return { cargado: false, sonando: false, posicion: 0, duracion: 0, tasa: 1, loop: null, eq: null, volumen: 1, ganancia: 1 }; }
+  #nuevo() { return { cargado: false, sonando: false, posicion: 0, duracion: 0, tasa: 1, loop: null, eq: null, volumen: 1, ganancia: 1, buffer: 0 }; }
   async cargar(id, blob) { const d = this.decks[id]; d.cargado = true; d.duracion = blob?.duracionSeg ?? 180; d.posicion = 0; this.llamadas.push(['cargar', id]); return { duracionSeg: d.duracion }; }
   descargar(id) { this.decks[id] = this.#nuevo(); this.llamadas.push(['descargar', id]); }
   reproducir(id, desde) { const d = this.decks[id]; d.sonando = true; if (desde != null) d.posicion = desde; this.llamadas.push(['reproducir', id]); }
@@ -28,6 +28,8 @@ export class MotorFalso extends MotorDJ {
   atenuar(factor, ms) { this.atenuaciones.push({ factor, ms }); }
   restaurar() { this.atenuaciones.push({ restaurar: true }); }
   alTerminar(cb) { this.cbTerminar = cb; }
+  async precargar(id, { segundos = 90 } = {}) { const d = this.decks[id]; d.buffer = Math.min(segundos, d.duracion); this.llamadas.push(['precargar', id, segundos]); return this.precarga(id); }
+  precarga(id) { const d = this.decks[id]; return { segundos: d.buffer, fraccion: d.duracion ? d.buffer / d.duracion : 0 }; }
   /** helpers de prueba */
   avanzar(id, seg) { this.decks[id].posicion += seg; }
   simularFin(id) { this.decks[id].sonando = false; this.cbTerminar?.(id); }

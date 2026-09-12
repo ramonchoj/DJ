@@ -59,3 +59,33 @@ test('DJAPI con analizador de YouTube: el título viene del analizador y el arch
   await dj.cargar('A', p.id);
   assert.equal(dj.sincronizar('A'), 0);
 });
+
+test('precarga: automática al cargar y manual con precargar(); nunca sobre un deck sonando', async () => {
+  const motor = new MotorFalso();
+  const dj = new DJAPI({ motor, repositorio: new RepositorioBibliotecaEnMemoria(), analizador: new AnalizadorYouTubeFalso(), importador: null, reloj: new RelojControlado(), precargaAutomaticaSeg: 60 });
+  await dj.iniciar();
+  assert.deepEqual(dj.precarga('A'), { segundos: 0, fraccion: 0 }, 'deck vacío: nada en buffer');
+  const p = await dj.importarArchivo({ videoId: 'dQw4w9WgXcQ' }, 'dQw4w9WgXcQ');
+  await dj.cargar('A', p.id);
+  await new Promise((r) => setTimeout(r, 0));
+  assert.deepEqual(motor.llamadas.filter((l) => l[0] === 'precargar'), [['precargar', 'A', 60]]);
+  assert.equal(dj.precarga('A').segundos, 60);
+  const r = await dj.precargar('A', { segundos: 120 });
+  assert.equal(r.segundos, 120);
+  assert.ok(Math.abs(r.fraccion - 120 / motor.duracion('A')) < 1e-9);
+  dj.reproducir('A');
+  const antes = motor.llamadas.length;
+  await dj.precargar('A', { segundos: 200 });
+  assert.equal(motor.llamadas.length, antes, 'sonando: no se toca el motor');
+  await assert.rejects(() => dj.precargar('B'), /no tiene pista/);
+});
+
+test('sin precargaAutomaticaSeg no se precarga nada al cargar', async () => {
+  const motor = new MotorFalso();
+  const dj = new DJAPI({ motor, repositorio: new RepositorioBibliotecaEnMemoria(), analizador: new AnalizadorYouTubeFalso(), importador: null, reloj: new RelojControlado() });
+  await dj.iniciar();
+  const p = await dj.importarArchivo({ videoId: 'dQw4w9WgXcQ' }, 'dQw4w9WgXcQ');
+  await dj.cargar('A', p.id);
+  await new Promise((r) => setTimeout(r, 0));
+  assert.equal(motor.llamadas.filter((l) => l[0] === 'precargar').length, 0);
+});

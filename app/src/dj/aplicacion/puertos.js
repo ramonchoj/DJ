@@ -31,6 +31,14 @@ export class MotorDJ {
   nivel(_deckId) { return 0; }
   /** Callback cuando una pista termina sola. */
   alTerminar(_cb) { /* opcional */ }
+  /**
+   * Precarga (buffer) opcional para fuentes en streaming: intenta tener
+   * `segundos` listos antes de tocar. Resuelve con lo que se logró.
+   * @returns {Promise<{segundos:number, fraccion:number}>}
+   */
+  async precargar(_deckId, _opciones) { return this.precarga(_deckId); }
+  /** @returns {{segundos:number, fraccion:number}} cuánto hay ya en buffer */
+  precarga(_deckId) { return { segundos: 0, fraccion: 0 }; }
 }
 
 /** Persistencia de la biblioteca (pistas + audio) y del estado del DJ. */
