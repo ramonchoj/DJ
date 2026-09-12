@@ -25,6 +25,7 @@ const BANCOS_FABRICA = {
   Efectos: { color: '#2a9d8f' },
   Clásicos: { color: '#ffbe0b' },
   Reacciones: { color: '#6a4c93' },
+  Calle: { color: '#f4a261' },
   Camas: { color: '#457b9d', esCama: true },
 };
 

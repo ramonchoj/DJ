@@ -250,6 +250,8 @@ export function catalogoDeFabrica() {
       { nombre: 'Incorrecto', modo: 'UN_TIRO', tecla: 'X', emoji: '❌', color: '#ef476f', generar: () => campana(false) },
       { nombre: 'Algo salió mal', modo: 'UN_TIRO', tecla: 'S', emoji: '💿', color: '#8338ec', generar: frenadoDeDisco },
       { nombre: 'Fanfarria', modo: 'UN_TIRO', tecla: 'V', emoji: '🎺', color: '#ffd60a', archivo: 'assets/mixkit/fanfare-722.mp3' },
+      { nombre: 'Wah wah', modo: 'UN_TIRO', tecla: '6', emoji: '🎺', color: '#6a4c93', archivo: 'assets/mixkit/wahwah-471.mp3' },
+      { nombre: 'Remate', modo: 'UN_TIRO', tecla: '7', emoji: '🥁', color: '#f4a261', archivo: 'assets/mixkit/remate-568.mp3' },
     ],
     Efectos: [
       { nombre: 'Air Horn', modo: 'UN_TIRO', tecla: 'A', emoji: '📯', color: '#fb5607', archivo: 'assets/vdj/air-horn.mp3' },
@@ -276,6 +278,14 @@ export function catalogoDeFabrica() {
       { nombre: 'Matraca', modo: 'UN_TIRO', tecla: 'N', emoji: '🎊', color: '#ffbe0b', archivo: 'assets/mixkit/party-horn-527.mp3' },
       { nombre: 'Fuegos', modo: 'UN_TIRO', tecla: 'G', emoji: '🎆', color: '#ff006e', archivo: 'assets/mixkit/firework-3103.mp3' },
       { nombre: 'Ta-Da', modo: 'UN_TIRO', tecla: 'Y', emoji: '✨', color: '#ffd60a', archivo: 'assets/mixkit/tada-638.mp3' },
+    ],
+    Calle: [
+      { nombre: 'Automóvil', modo: 'UN_TIRO', tecla: '1', emoji: '🚗', color: '#3a86ff', archivo: 'assets/mixkit/auto-1538.mp3' },
+      { nombre: 'Moto', modo: 'UN_TIRO', tecla: '2', emoji: '🏍️', color: '#fb5607', archivo: 'assets/mixkit/moto-2732.mp3' },
+      { nombre: 'Avión', modo: 'UN_TIRO', tecla: '3', emoji: '✈️', color: '#457b9d', archivo: 'assets/mixkit/avion-1577.mp3' },
+      { nombre: 'Fierro viejo', modo: 'UN_TIRO', tecla: '4', emoji: '📢', color: '#e63946', archivo: 'assets/voces/fierro-viejo.mp3' },
+      { nombre: 'Campana basura', modo: 'UN_TIRO', tecla: '5', emoji: '🔔', color: '#2a9d8f', archivo: 'assets/mixkit/campana-basura-sintetizada.mp3' },
+      { nombre: 'Tamales', modo: 'UN_TIRO', tecla: '8', emoji: '🫔', color: '#ffbe0b', archivo: 'assets/voces/tamales.mp3' },
     ],
   };
 }

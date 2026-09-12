@@ -20,5 +20,11 @@ Descargados de Mixkit (mixkit.co), gratuitos bajo la [Licencia de Contenido Grat
 | firework-3103.mp3 | 3103 | Fuegos artificiales | 3.3s |
 | fanfare-722.mp3 | 722 | Fanfarria | 3.2s |
 | tada-638.mp3 | 638 | Ta-Da | 3.9s |
+| auto-1538.mp3 | 1538 | Automóvil pasando rápido | 3s |
+| moto-2732.mp3 | 2732 | Moto pasando | 7s |
+| avion-1577.mp3 | 1577 | Avión jet despegando | 10s |
+| wahwah-471.mp3 | 471 | Trombón triste (wah wah, chiste malo) | 5s |
+| remate-568.mp3 | 568 | Remate de chiste (tambor y xilófono) | 3s |
+| campana-basura-sintetizada.mp3 | — | Campana de mano (camión de la basura), **sintetizada por nosotros** (no es de Mixkit) | 3.2s |
 
 Fuente: https://mixkit.co/free-sound-effects/ (categorías: applause, laugh, siren, car-horn, boo, crowd-cheering, glass, drum-roll, whistle, countdown, bass-hit, party-horn, firework, fanfare, ta-da)

@@ -126,3 +126,10 @@ Fuera de alcance a propósito: keylock (Elastique), stems IA, video, DVS, stream
 - Nuevo: **Grabar sesión** (puerto `GrabadorSesion`, adaptador `GrabadorSesionWebAudio` con MediaRecorder sobre un nodo de salida compartido por pads y decks). Botón ⏺ en la barra de automix; al detener descarga `cabina-sesion-<fecha>.webm` (m4a en Safari). Verificado en navegador: 3.2 s → 58 KB webm/opus. 106/106 pruebas.
 - Hallazgo: `AudioContext.resume()` sin gesto del usuario puede no resolver nunca; nunca se espera con `await`, se reanuda solo con el primer toque en la página.
 - Recordatorio Cloudflare: los .js quedan en caché de borde 4 h; tras cada despliegue purgar en dash.cloudflare.com → softmotion.mx → Caching → Purge Everything, o abrir con `?v=<algo>`.
+
+## 16. Sonidos nuevos: banco "Calle" + remates (2026-09-12) — completado
+Pedido: automóvil, moto, avión, pregón "se compran colchones…", wah-wah de chiste malo, remate de chiste y campana del camión de la basura.
+- De Mixkit (licencia libre): Automóvil (1538), Moto (2732), Avión jet (1577), Wah wah trombón triste (471), Remate tambor+xilófono (568).
+- **Campana del camión de la basura**: Mixkit no tiene campana de mano; se sintetizó (parciales inarmónicos de campana, 6 repiques) → `assets/mixkit/campana-basura-sintetizada.mp3`.
+- **"Fierro viejo"**: el pregón original es la voz de una persona real y no está en bancos libres; se generó con la voz **Microsoft Sabina (es-MX)** de Windows (System.Speech) → `assets/voces/fierro-viejo.mp3`. De regalo, "Tamales" con la misma voz. Documentado en `assets/voces/LICENCIA.md`.
+- Catálogo: banco nuevo **Calle** (teclas 1-5 y 8) y Golpes suma Wah wah (6) y Remate (7). Los tableros existentes reciben los nuevos pads solos (instalación de fábrica idempotente). 106/106 pruebas. Verificado en navegador.
