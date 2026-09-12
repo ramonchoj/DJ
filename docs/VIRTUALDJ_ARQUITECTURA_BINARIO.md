@@ -122,3 +122,21 @@ Una sola tabla `waveforms(id, filepath, filename, filesize, type, version, value
 3. **Los análisis de VDJ (BPM, key, autogain, beatgrid, waveform) están en XML y SQLite abiertos**: son insumo directo para el ordenador de mezclas y evitan re-analizar.
 4. **Todo es scriptable** por VDJScript (~200 verbos): un mapeo de teclado o de controladora puede disparar `sampler_pad N`, `automix_skip`, etc. Si algún día queremos que la consola web controle VirtualDJ en vivo, la vía es VDJ Remote (puerto 4243) o OS2L.
 5. **La máquina es el cuello de botella para stems** (GT 730). No planificar nada que dependa de separación de voces en tiempo real en este equipo.
+
+## 8. Dónde vive la licencia y cómo funciona (2026-09-12)
+
+**No hay archivo de licencia ni número de serie en el disco.** Revisado: registro (`HKCU\Software\VirtualDJ` y `HKLM\SOFTWARE\VirtualDJ` solo guardan `RunFolder64` y `HomeFolder`), la carpeta de datos (solo `database.xml` y `settings.xml`), y no existen `.lic`, `.key` ni `.drm`. El MSI tampoco instala nada de licencia.
+
+**La licencia es la cuenta de usuario en virtualdj.com**, y se comprueba en línea cada vez que arranca:
+1. `settings.xml` guarda la sesión: `internetLogin` (vacío en esta máquina = no hay cuenta iniciada), `stayLoggedIn=yes`, `dontLogin=no`, `autoRefreshDRM=yes`.
+2. Al iniciar, el exe llama a `live.virtualdj.com/live/oauth.php` (login) y a `drm8.php` (validación de derechos) sobre HTTPS con OpenSSL embebido; `subs.php` consulta suscripciones, `getkey.php`/`addkey.php` registran claves de producto compradas, `managecl.php` gestiona "Content Unlimited" (Tidal, etc.) y `logcu.php` registra el consumo de ese contenido.
+3. La respuesta define la edición: cadenas `License: LE (full trial period)`, `PRO trial - %i days left`, `PRO trial - expired`, `License: PRO Infinity`, `VirtualDJ PRO Business`, `Monthly subscription`, `subscription active/blocked/ended on %s`.
+4. Identificación de equipo: usa `GetVolumeInformationW` (serial del volumen) y UUIDs, no hay un archivo de "hardware id" persistente.
+
+**Qué limita cada edición (según los textos del propio programa):**
+- Sin licencia (Home/LE): la app completa funciona con teclado y ratón; aparece publicidad (`buy any license to remove the ads`); **controladoras y timecodes solo 10 minutos seguidos** (`Without a license, you can use a controller only for 10mn at a time`); no se pueden usar mapeos personalizados (`Custom definitions require a Pro license`); algunos plugins piden Pro.
+- Controladoras "Limited Edition" (vienen con licencia incluida para ese hardware): funcionan sin límite solo con esa controladora (`CONTROLLER LICENSE`, `ANALOG MIXER LICENSE`).
+- PRO Infinity (pago único) / PRO Business (mensual): sin límites; Business añade streaming de catálogos.
+- El contenido de Tidal/SoundCloud/Beatport exige suscripción aparte al proveedor (`TIDAL HiFi Plus subscription required`) y no se exporta (`Songs from a music subscription can not be exported`); el caché en línea caduca (`Online content cache expired`).
+
+**Estado en esta máquina:** no hay cuenta iniciada en settings (`internetLogin` vacío), por lo que corre como Home/LE gratuita. Sí hay tokens de Tidal guardados (sesión de streaming), que son independientes de la licencia de VDJ. Para uso en fiestas con solo teclado/ratón y música local no hace falta licencia; haría falta si se conecta una controladora más de 10 minutos.
