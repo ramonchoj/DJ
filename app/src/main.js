@@ -17,7 +17,7 @@ import { ImportadorVirtualDJ } from './dj/adaptadores/ImportadorVirtualDJ.js';
 import { UIDJ } from './dj/adaptadores/UIDJ.js';
 import { GrabadorSesionWebAudio } from './dj/adaptadores/GrabadorSesionWebAudio.js';
 
-export const VERSION_APP = '3.0.0';
+export const VERSION_APP = '3.0.1';
 const CLAVE_MODO = 'cabina.modo';
 
 const BANCOS_FABRICA = {

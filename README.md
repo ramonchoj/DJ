@@ -20,6 +20,7 @@ La biblioteca de audio vive en Google Drive (`G:\Mi unidad\Musica fiestas`); est
 | [docs/IDENTIFICACION_RECORDING_65.md](docs/IDENTIFICACION_RECORDING_65.md) | Resultado final del intento de identificar canciones dentro de Recording_65.m4a por huella acústica: sin coincidencias reales, con explicación y alternativas |
 | [docs/REINGENIERIA_CABINA_V2.md](docs/REINGENIERIA_CABINA_V2.md) | Revisión de la v1 contra la lista de features y plan/implementación de la v2 |
 | [docs/ANALISIS_FEATURES_VIRTUALDJ.md](docs/ANALISIS_FEATURES_VIRTUALDJ.md) | Análisis completo de features de VirtualDJ (17 áreas) y qué significa "mejor para nosotros"; base del módulo DJ de Cabina v3 |
+| [tools/deploy.sh](tools/deploy.sh) | Despliegue versionado a cabina.softmotion.mx (rutas `r/<versión>/` + import map, inmune al caché de Cloudflare) |
 
 ## Regla de trabajo
 

@@ -133,3 +133,8 @@ Pedido: automóvil, moto, avión, pregón "se compran colchones…", wah-wah de 
 - **Campana del camión de la basura**: Mixkit no tiene campana de mano; se sintetizó (parciales inarmónicos de campana, 6 repiques) → `assets/mixkit/campana-basura-sintetizada.mp3`.
 - **"Fierro viejo"**: el pregón original es la voz de una persona real y no está en bancos libres; se generó con la voz **Microsoft Sabina (es-MX)** de Windows (System.Speech) → `assets/voces/fierro-viejo.mp3`. De regalo, "Tamales" con la misma voz. Documentado en `assets/voces/LICENCIA.md`.
 - Catálogo: banco nuevo **Calle** (teclas 1-5 y 8) y Golpes suma Wah wah (6) y Remate (7). Los tableros existentes reciben los nuevos pads solos (instalación de fábrica idempotente). 106/106 pruebas. Verificado en navegador.
+
+## 17. Despliegue versionado (2026-09-12) — completado
+Síntoma reportado: "no sirve el botón DJ" en cabina.softmotion.mx. Causa: Cloudflare cachea .js/.css 4 h ignorando el Cache-Control del origen; el index.html nuevo llegaba con el main.js viejo (sin el selector de modo).
+Solución definitiva: `tools/deploy.sh` despliega cada versión en `r/<versión>/` (URLs nuevas → caché frío), el index.html (que Cloudflare no cachea) carga `r/<versión>/src/main.js` y un **import map** redirige todos los imports de módulos a esa carpeta; el service worker se registra como `sw.js?v=<versión>`; los audios siguen en `assets/` (inmutables). Conserva las últimas 3 versiones en el servidor. Ya no hace falta purgar Cloudflare tras un despliegue.
+Uso: `bash tools/deploy.sh` (toma la versión de app/package.json). Versión actual desplegada: 3.0.1.
