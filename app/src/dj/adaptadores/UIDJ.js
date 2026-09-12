@@ -172,6 +172,25 @@ export class UIDJ {
     cb.onchange = () => this.#dj.fijarBeatmatch(cb.checked);
     bm.appendChild(cb); bm.appendChild(el('span', '', 'Igualar BPM al mezclar'));
     bar.appendChild(bm);
+    if (this.#dj.grabacionSesionSoportada()) {
+      const grabando = this.#dj.grabandoSesion();
+      const rec = el('button', 'boton-secundario' + (grabando ? ' boton-rec--on' : ''), grabando ? '⏹ Guardar grabación' : '⏺ Grabar sesión');
+      rec.title = 'Graba todo lo que suena (pads + decks) a un archivo de audio';
+      rec.onclick = async () => {
+        try {
+          if (!grabando) { await this.#dj.iniciarGrabacionSesion(); return; }
+          const blob = await this.#dj.detenerGrabacionSesion();
+          const tipo = blob.type || '';
+          const ext = tipo.includes('mp4') ? 'm4a' : (tipo.includes('ogg') ? 'ogg' : 'webm');
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url; a.download = `cabina-sesion-${new Date().toISOString().replace(/[:T]/g, '-').slice(0, 16)}.${ext}`; a.click();
+          setTimeout(() => URL.revokeObjectURL(url), 5000);
+        } catch (x) { this.#error(x); }
+      };
+      bar.appendChild(rec);
+      if (grabando) bar.appendChild(el('span', 'dj-rec-tiempo', '0:00'));
+    }
     const estado = el('span', 'dj-estado', e.transicion ? `Mezclando ${e.transicion.desde} → ${e.transicion.hacia}…` : (e.automix ? `Siguiente: ${e.cola.siguiente ? this.#dj.pista(e.cola.siguiente).nombreCompleto : '(cola vacía)'}` : ''));
     bar.appendChild(estado);
     return bar;
@@ -268,6 +287,8 @@ export class UIDJ {
         sec.querySelector('.deck-pos').textContent = fmt(pos);
         sec.querySelector('.deck-rest').textContent = d.pista ? `-${fmt(d.pista.duracionSeg - pos)}` : '';
         this.#dibujarOnda(id, d, pos);
+        const rec = this.#raiz.querySelector('.dj-rec-tiempo');
+        if (rec) rec.textContent = fmt(this.#dj.duracionGrabacionSeg());
         const vu = this.#raiz.querySelector(`.dj-vu--${id} .dj-vu-barra`);
         if (vu) vu.style.height = `${Math.round(Math.min(1, this.#dj.motor.nivel(id) * 1.4) * 100)}%`;
       }

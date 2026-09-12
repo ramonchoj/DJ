@@ -1,4 +1,4 @@
-import { MotorDJ, RepositorioBiblioteca, AnalizadorPista, ImportadorAnalisis } from '../../src/dj/aplicacion/puertos.js';
+import { MotorDJ, RepositorioBiblioteca, AnalizadorPista, ImportadorAnalisis, GrabadorSesion } from '../../src/dj/aplicacion/puertos.js';
 
 export class MotorFalso extends MotorDJ {
   constructor() {
@@ -63,4 +63,13 @@ export class RelojControlado {
 /** Blob falso de pista con metadatos de análisis simulados. */
 export function pistaBlob(nombre, { duracionSeg = 180, bpm = 120, picoDb = -3 } = {}) {
   return { esBlobFalso: true, nombre, duracionSeg, analisis: { duracionSeg, bpm, picoDb } };
+}
+
+export class GrabadorSesionFalso extends GrabadorSesion {
+  constructor({ soportado = true } = {}) { super(); this._soportado = soportado; this.estado = 'inactivo'; this.seg = 0; }
+  soportado() { return this._soportado; }
+  grabando() { return this.estado === 'grabando'; }
+  duracionSeg() { return this.seg; }
+  async iniciar() { this.estado = 'grabando'; this.seg = 0; }
+  async detener() { this.estado = 'inactivo'; return { esBlobFalso: true, size: 4096, type: 'audio/webm' }; }
 }

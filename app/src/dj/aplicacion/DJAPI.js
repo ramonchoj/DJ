@@ -36,8 +36,9 @@ export class DJAPI {
   #transicion = null; // { desde, hacia, inicioMs, duracionMs }
   #historial = [];
 
-  constructor({ motor, repositorio, analizador, importador = null, reloj }) {
+  constructor({ motor, repositorio, analizador, importador = null, reloj, grabadorSesion = null }) {
     this.motor = motor;
+    this.grabadorSesion = grabadorSesion;
     this.repositorio = repositorio;
     this.analizador = analizador;
     this.importador = importador;
@@ -294,6 +295,23 @@ export class DJAPI {
 
   /** Talkover / ducking desde la consola de pads. */
   atenuar(factor, ms) { this.motor.atenuar(factor, ms); }
+
+  // ------------------------------------------------------------ grabación de la sesión
+  grabacionSesionSoportada() { return Boolean(this.grabadorSesion?.soportado()); }
+  grabandoSesion() { return Boolean(this.grabadorSesion?.grabando()); }
+  duracionGrabacionSeg() { return this.grabadorSesion?.duracionSeg() || 0; }
+  async iniciarGrabacionSesion() {
+    if (!this.grabacionSesionSoportada()) throw new ErrorValidacion('Este navegador no permite grabar la sesión');
+    if (this.grabandoSesion()) return;
+    await this.grabadorSesion.iniciar();
+    this.#bus.publicar(EventosDJ.AUTOMIX_CAMBIADO, {});
+  }
+  async detenerGrabacionSesion() {
+    if (!this.grabandoSesion()) throw new ErrorValidacion('No hay una grabación en curso');
+    const blob = await this.grabadorSesion.detener();
+    this.#bus.publicar(EventosDJ.AUTOMIX_CAMBIADO, {});
+    return blob;
+  }
 
   // ------------------------------------------------------------ cola y automix
   async encolar(pistaId, opciones) { this.pista(pistaId); this.#cola = this.#cola.agregar(pistaId, opciones); this.#bus.publicar(EventosDJ.COLA_CAMBIADA, {}); await this.#persistirEstado(); }

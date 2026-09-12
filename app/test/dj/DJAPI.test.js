@@ -223,3 +223,23 @@ test('atenuar (talkover) llega al motor', async () => {
   dj.atenuar(0.3, 1500);
   assert.deepEqual(motor.atenuaciones, [{ factor: 0.3, ms: 1500 }]);
 });
+
+test('grabación de sesión: iniciar/detener devuelve un archivo y publica cambios; sin soporte, error claro', async () => {
+  const { GrabadorSesionFalso } = await import('../dobles/doblesDJ.js');
+  const grab = new GrabadorSesionFalso();
+  const { dj } = nuevoDJ();
+  dj.grabadorSesion = grab;
+  await dj.iniciar();
+  assert.equal(dj.grabacionSesionSoportada(), true);
+  let eventos = 0;
+  dj.suscribir(EventosDJ.AUTOMIX_CAMBIADO, () => { eventos += 1; });
+  await dj.iniciarGrabacionSesion();
+  assert.equal(dj.grabandoSesion(), true);
+  const blob = await dj.detenerGrabacionSesion();
+  assert.equal(blob.size, 4096);
+  assert.equal(dj.grabandoSesion(), false);
+  assert.equal(eventos, 2);
+  await assert.rejects(() => dj.detenerGrabacionSesion(), /grabación/);
+  dj.grabadorSesion = new GrabadorSesionFalso({ soportado: false });
+  await assert.rejects(() => dj.iniciarGrabacionSesion(), /grabar/);
+});

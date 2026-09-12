@@ -14,7 +14,7 @@ export class ReproductorWebAudio extends Reproductor {
   #activos = new Map(); // token -> { soundId, bancoId, modo, source, gain, ganancia, inicio, duracion, loop }
   #contador = 0;
 
-  constructor({ contexto = null } = {}) {
+  constructor({ contexto = null, salida = null } = {}) {
     super();
     const Ctx = window.AudioContext || window.webkitAudioContext;
     this.#ctx = contexto || new Ctx();
@@ -24,7 +24,7 @@ export class ReproductorWebAudio extends Reproductor {
     this.#analizador.fftSize = 256;
     this.#muestras = new Uint8Array(this.#analizador.fftSize);
     this.#maestro.connect(this.#analizador);
-    this.#analizador.connect(this.#ctx.destination);
+    this.#analizador.connect(salida || this.#ctx.destination);
   }
 
   get contexto() { return this.#ctx; }

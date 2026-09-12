@@ -211,3 +211,6 @@ dialog.dlg::backdrop { background: rgba(0,0,0,0.5); }
   .deck-controles { grid-template-columns: repeat(3, 1fr); }
   .marca { flex-wrap: wrap; }
 }
+
+.boton-rec--on { border-color: var(--peligro); color: var(--peligro); animation: parpadeo 1.2s ease-in-out infinite; }
+.dj-rec-tiempo { font-family: "Barlow Semi Condensed", sans-serif; font-weight: 700; color: var(--peligro); font-variant-numeric: tabular-nums; }

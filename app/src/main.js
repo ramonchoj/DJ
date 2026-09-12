@@ -15,6 +15,7 @@ import { AnalizadorBpm } from './dj/adaptadores/AnalizadorBpm.js';
 import { RepositorioBibliotecaIndexedDB } from './dj/adaptadores/RepositorioBibliotecaIndexedDB.js';
 import { ImportadorVirtualDJ } from './dj/adaptadores/ImportadorVirtualDJ.js';
 import { UIDJ } from './dj/adaptadores/UIDJ.js';
+import { GrabadorSesionWebAudio } from './dj/adaptadores/GrabadorSesionWebAudio.js';
 
 export const VERSION_APP = '3.0.0';
 const CLAVE_MODO = 'cabina.modo';
@@ -88,10 +89,13 @@ async function iniciar() {
   // Un solo AudioContext para pads y decks: misma salida, mismo permiso de autoplay.
   const Ctx = window.AudioContext || window.webkitAudioContext;
   const contexto = new Ctx();
+  // Nodo final por el que pasa TODO (pads + decks): es lo que se graba en "grabar sesión".
+  const salida = contexto.createGain();
+  salida.connect(contexto.destination);
 
   // --- consola de pads ---
   const repositorio = new RepositorioIndexedDB();
-  const reproductor = new ReproductorWebAudio({ contexto });
+  const reproductor = new ReproductorWebAudio({ contexto, salida });
   const analizador = new AnalizadorOffline();
   const empaquetador = new EmpaquetadorJSON();
   const reloj = new RelojSistema();
@@ -99,13 +103,14 @@ async function iniciar() {
   const consola = new ConsolaAPI({ repositorio, reproductor, analizador, empaquetador, reloj, grabadora });
 
   // --- módulo DJ ---
-  const motor = new MotorWebAudio({ contexto });
+  const motor = new MotorWebAudio({ contexto, salida });
   const dj = new DJAPI({
     motor,
     repositorio: new RepositorioBibliotecaIndexedDB(),
     analizador: new AnalizadorBpm({ contexto }),
     importador: new ImportadorVirtualDJ(),
     reloj: { ahora: () => Date.now() },
+    grabadorSesion: new GrabadorSesionWebAudio({ contexto, fuente: salida }),
   });
 
   window.__cabina = consola;

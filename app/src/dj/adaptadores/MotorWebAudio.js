@@ -22,14 +22,14 @@ export class MotorWebAudio extends MotorDJ {
   #cbTerminar = null;
   #picosCache = new Map();
 
-  constructor({ contexto = null } = {}) {
+  constructor({ contexto = null, salida = null } = {}) {
     super();
     const Ctx = window.AudioContext || window.webkitAudioContext;
     this.#ctx = contexto || new Ctx();
     this.#duck = this.#ctx.createGain();
     this.#maestro = this.#ctx.createGain();
     this.#duck.connect(this.#maestro);
-    this.#maestro.connect(this.#ctx.destination);
+    this.#maestro.connect(salida || this.#ctx.destination);
     for (const id of ['A', 'B']) this.#decks[id] = this.#crearDeck();
   }
 

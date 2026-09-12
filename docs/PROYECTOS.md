@@ -120,3 +120,9 @@ Ver [ANALISIS_FEATURES_VIRTUALDJ.md](ANALISIS_FEATURES_VIRTUALDJ.md): 17 áreas 
 Construido: módulo DJ dentro de Cabina (v3.0.0), hexagonal: dominio (Pista, Deck, Mezclador, Cola, ReglasDeAutomix con puntos de mezcla/beatmatch/Camelot), aplicación (DJAPI: biblioteca, decks, cues, loops, EQ, crossfader, cola, automix con tick, talkover), adaptadores (MotorWebAudio 2 decks + EQ + crossfader + ducking, AnalizadorBpm, RepositorioBibliotecaIndexedDB, ImportadorVirtualDJ, UIDJ). Selector Pads/DJ/Ambos. 105/105 pruebas.
 Verificado con música real en el navegador: BPM propio 134.0 / 107.6 vs VirtualDJ 134.0 / 107.3; importación de database.xml aplica análisis a 2 de 40 pistas presentes; decks, loop, EQ, cola, "mezclar ya" y transición correctos. Corregida la semántica de los POI automix de VirtualDJ (fadeEnd = inicio del fade de salida).
 Fuera de alcance a propósito: keylock (Elastique), stems IA, video, DVS, streaming con DRM.
+
+## 15. Cabina v3 desplegada + grabación de sesión (2026-09-12) — completado
+- **Desplegada en https://cabina.softmotion.mx/** (73 archivos, 4.8 MB) y en el Artifact de pruebas. Selector Pads / DJ / Ambos arriba a la izquierda.
+- Nuevo: **Grabar sesión** (puerto `GrabadorSesion`, adaptador `GrabadorSesionWebAudio` con MediaRecorder sobre un nodo de salida compartido por pads y decks). Botón ⏺ en la barra de automix; al detener descarga `cabina-sesion-<fecha>.webm` (m4a en Safari). Verificado en navegador: 3.2 s → 58 KB webm/opus. 106/106 pruebas.
+- Hallazgo: `AudioContext.resume()` sin gesto del usuario puede no resolver nunca; nunca se espera con `await`, se reanuda solo con el primer toque en la página.
+- Recordatorio Cloudflare: los .js quedan en caché de borde 4 h; tras cada despliegue purgar en dash.cloudflare.com → softmotion.mx → Caching → Purge Everything, o abrir con `?v=<algo>`.

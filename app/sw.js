@@ -22,6 +22,7 @@ const SHELL = [
   './src/dj/adaptadores/RepositorioBibliotecaIndexedDB.js',
   './src/dj/adaptadores/ImportadorVirtualDJ.js',
   './src/dj/adaptadores/UIDJ.js',
+  './src/dj/adaptadores/GrabadorSesionWebAudio.js',
   './src/aplicacion/ConsolaAPI.js',
   './src/aplicacion/puertos/secundarios.js',
   './src/aplicacion/casosDeUso/AgregarSonido.js',

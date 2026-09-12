@@ -57,3 +57,14 @@ export class AnalizadorPista {
 export class ImportadorAnalisis {
   async importar(_texto) { noImplementado('ImportadorAnalisis.importar'); }
 }
+
+/** Graba la mezcla final (pads + decks) a un archivo de audio. */
+export class GrabadorSesion {
+  soportado() { return false; }
+  async iniciar() { noImplementado('GrabadorSesion.iniciar'); }
+  /** @returns {Promise<Blob>} */
+  async detener() { noImplementado('GrabadorSesion.detener'); }
+  grabando() { return false; }
+  /** @returns {number} segundos grabados hasta ahora */
+  duracionSeg() { return 0; }
+}

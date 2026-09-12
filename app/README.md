@@ -16,6 +16,7 @@ Un sistema de DJ pensado para lo que VirtualDJ no resuelve en una fiesta real: c
 - **Mezclador** con crossfader (curva "full") y maestro, medidores por deck.
 - **Automix con cola**: mezcla sola en el punto de salida (el de VirtualDJ si existe, si no `duración − fade`), con beatmatch opcional y "Mezclar ya".
 - **Talkover**: cuando suena un pad de la consola, la música baja al factor de ducking y vuelve sola.
+- **Grabar sesión**: graba todo lo que suena (pads + decks) a un archivo webm/opus (m4a en Safari), como el record de VirtualDJ.
 - Selector **Pads / DJ / Ambos** arriba; todo dentro de la misma arquitectura hexagonal (`src/dj/{dominio,aplicacion,adaptadores}`), 27 pruebas propias.
 
 ## Novedades v2 (reingeniería completa, ver docs/REINGENIERIA_CABINA_V2.md)
@@ -52,7 +53,7 @@ Ver el análisis completo en `docs/ARQUITECTURA_HEXAGONAL.md` del repo.
 ## Desarrollo
 
 ```bash
-npm test   # 105 pruebas de dominio + aplicación con node --test, sin navegador
+npm test   # 106 pruebas de dominio + aplicación con node --test, sin navegador
 npm run dev  # sirve la carpeta en http://localhost:8080
 ```
 
