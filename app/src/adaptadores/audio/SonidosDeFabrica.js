@@ -263,5 +263,17 @@ export function catalogoDeFabrica() {
       { nombre: 'Hands Up', modo: 'UN_TIRO', tecla: 'U', color: '#06d6a0', archivo: 'assets/vdj/hands-up.mp3' },
       { nombre: 'This This This', modo: 'UN_TIRO', tecla: 'T', color: '#ffbe0b', archivo: 'assets/vdj/this-this-this.mp3' },
     ],
+    Reacciones: [
+      { nombre: 'Bocina', modo: 'UN_TIRO', tecla: 'B', color: '#ff9f1c', archivo: 'assets/mixkit/car-horn-715.mp3' },
+      { nombre: 'Abucheo', modo: 'UN_TIRO', tecla: 'O', color: '#6a4c93', archivo: 'assets/mixkit/boo-463.mp3' },
+      { nombre: 'Multitud', modo: 'UN_TIRO', tecla: 'M', color: '#2a9d8f', archivo: 'assets/mixkit/crowd-cheering-610.mp3' },
+      { nombre: 'Brindis', modo: 'UN_TIRO', tecla: 'D', color: '#f4a261', archivo: 'assets/mixkit/glass-1317.mp3' },
+      { nombre: 'Redoble Final', modo: 'UN_TIRO', tecla: 'F', color: '#e63946', archivo: 'assets/mixkit/drum-roll-577.mp3' },
+      { nombre: 'Silbato', modo: 'UN_TIRO', tecla: 'W', color: '#3a86ff', archivo: 'assets/mixkit/whistle-616.mp3' },
+      { nombre: 'Cuenta Regresiva', modo: 'UN_TIRO', tecla: 'Q', color: '#8338ec', archivo: 'assets/mixkit/countdown-916.mp3' },
+      { nombre: 'Bajo', modo: 'UN_TIRO', tecla: 'J', color: '#264653', archivo: 'assets/mixkit/bass-hit-2299.mp3' },
+      { nombre: 'Matraca', modo: 'UN_TIRO', tecla: 'N', color: '#ffbe0b', archivo: 'assets/mixkit/party-horn-527.mp3' },
+      { nombre: 'Fuegos', modo: 'UN_TIRO', tecla: 'G', color: '#ff006e', archivo: 'assets/mixkit/firework-3103.mp3' },
+    ],
   };
 }

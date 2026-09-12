@@ -8,7 +8,7 @@ import { UITactil } from './adaptadores/ui/UITactil.js';
 import { AdaptadorTeclado } from './adaptadores/teclado/AdaptadorTeclado.js';
 import { catalogoDeFabrica, audioBufferAWav } from './adaptadores/audio/SonidosDeFabrica.js';
 
-const COLOR_BANCO = { Golpes: '#e63946', Efectos: '#2a9d8f', Clásicos: '#ffbe0b' };
+const COLOR_BANCO = { Golpes: '#e63946', Efectos: '#2a9d8f', Clásicos: '#ffbe0b', Reacciones: '#6a4c93' };
 
 async function instalarSonidosDeFabrica(consola) {
   const catalogo = catalogoDeFabrica();
@@ -62,12 +62,16 @@ async function iniciar() {
   const ui = new UITactil(raiz, consola);
   new AdaptadorTeclado(consola);
 
-  const necesitaFabrica = estadoInicial.bancos.length === 0;
+  // Siempre se revisa el catálogo de fábrica (no solo la primera vez): así,
+  // si una actualización agrega un banco o sonido nuevo, los tableros que
+  // ya existían en IndexedDB también lo reciben. instalarSonidosDeFabrica
+  // es idempotente: no toca lo que el usuario ya tiene, solo agrega lo que
+  // falta. El spinner solo se muestra si de verdad no había nada todavía,
+  // para no parpadear en cada carga cuando ya está todo instalado.
+  const primeraVez = estadoInicial.bancos.length === 0;
   const cargando = document.getElementById('cargando');
-  if (necesitaFabrica) {
-    if (cargando) cargando.hidden = false;
-    await instalarSonidosDeFabrica(consola);
-  }
+  if (primeraVez && cargando) cargando.hidden = false;
+  await instalarSonidosDeFabrica(consola);
   if (cargando) cargando.hidden = true;
 
   ui.render();
