@@ -249,6 +249,7 @@ export function catalogoDeFabrica() {
       { nombre: 'Correcto', modo: 'UN_TIRO', tecla: 'K', color: '#06d6a0', generar: () => campana(true) },
       { nombre: 'Incorrecto', modo: 'UN_TIRO', tecla: 'X', color: '#ef476f', generar: () => campana(false) },
       { nombre: 'Algo salió mal', modo: 'UN_TIRO', tecla: 'S', color: '#8338ec', generar: frenadoDeDisco },
+      { nombre: 'Fanfarria', modo: 'UN_TIRO', tecla: 'V', color: '#ffd60a', archivo: 'assets/mixkit/fanfare-722.mp3' },
     ],
     Efectos: [
       { nombre: 'Air Horn', modo: 'UN_TIRO', tecla: 'A', color: '#fb5607', archivo: 'assets/vdj/air-horn.mp3' },
@@ -274,6 +275,7 @@ export function catalogoDeFabrica() {
       { nombre: 'Bajo', modo: 'UN_TIRO', tecla: 'J', color: '#264653', archivo: 'assets/mixkit/bass-hit-2299.mp3' },
       { nombre: 'Matraca', modo: 'UN_TIRO', tecla: 'N', color: '#ffbe0b', archivo: 'assets/mixkit/party-horn-527.mp3' },
       { nombre: 'Fuegos', modo: 'UN_TIRO', tecla: 'G', color: '#ff006e', archivo: 'assets/mixkit/firework-3103.mp3' },
+      { nombre: 'Ta-Da', modo: 'UN_TIRO', tecla: 'Y', color: '#ffd60a', archivo: 'assets/mixkit/tada-638.mp3' },
     ],
   };
 }
