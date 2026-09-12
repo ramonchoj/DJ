@@ -18,7 +18,6 @@ Descargados de Mixkit (mixkit.co), gratuitos bajo la [Licencia de Contenido Grat
 | bass-hit-2299.mp3 | 2299 | Impacto de graves | 1.1s |
 | party-horn-527.mp3 | 527 | Matraca/corneta de fiesta | 1.5s |
 | firework-3103.mp3 | 3103 | Fuegos artificiales | 3.3s |
-| fanfare-722.mp3 | 722 | Fanfarria | 3.2s |
 | tada-638.mp3 | 638 | Ta-Da | 3.9s |
 | auto-1538.mp3 | 1538 | Automóvil pasando rápido | 3s |
 | moto-2732.mp3 | 2732 | Moto pasando | 7s |

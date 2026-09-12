@@ -20,7 +20,7 @@ import { MotorYouTube } from './yt/adaptadores/MotorYouTube.js';
 import { AnalizadorYouTube } from './yt/adaptadores/AnalizadorYouTube.js';
 import { extraerVideoIds } from './yt/adaptadores/youtube.js';
 
-export const VERSION_APP = '3.2.0';
+export const VERSION_APP = '3.3.0';
 const CLAVE_MODO = 'cabina.modo';
 
 const BANCOS_FABRICA = {

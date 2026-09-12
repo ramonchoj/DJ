@@ -152,3 +152,9 @@ El usuario entregó dos mp3 propios (pregón "se compran colchones", 22 s, y cam
 
 ## 21. Banco "Animales" para concursos (2026-09-12) — completado (v3.2.0)
 16 sonidos de animales de Mixkit (licencia libre): perro, gato, vaca, gallo, gallina, caballo, león, mono, cerdo, lobo, burro, oveja, cabra, búho, abeja, grillo (0.9–11.8 s). Sin teclas rápidas (las 26 letras y los dígitos 1–8 ya están asignados). Para el concurso "adivina el animal": el botón 🎲 del banco dispara uno al azar sin repetir el anterior. Verificado en navegador (16 pads, ruleta con resultados distintos). 110/110 pruebas. Desplegado en producción.
+
+## 22. Fanfarrias y "Queremos pastel" (2026-09-12) — completado (v3.3.0)
+El usuario entregó dos mp3 propios. Procesados con ffmpeg (recorte de silencios, loudnorm −14 LUFS / TP −1 dBFS, 44.1 kHz 128 kbps):
+- `assets/usuario/fanfarrias.mp3` (26 s) sustituye al pad "Fanfarria" de Mixkit (banco Golpes, tecla V) mediante `reemplazaA`; se borró `fanfare-722.mp3`.
+- `assets/usuario/queremos-pastel.mp3` (75 s, fade final de 1 s) es el pad nuevo "Queremos pastel" 🎂 (banco Reacciones, tecla 9). Por su duración conviene cortarlo con "Detener todo" cuando el pastel ya salió.
+110/110 pruebas. Desplegado en producción y en el Artifact.

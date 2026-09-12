@@ -249,7 +249,7 @@ export function catalogoDeFabrica() {
       { nombre: 'Correcto', modo: 'UN_TIRO', tecla: 'K', emoji: '✅', color: '#06d6a0', generar: () => campana(true) },
       { nombre: 'Incorrecto', modo: 'UN_TIRO', tecla: 'X', emoji: '❌', color: '#ef476f', generar: () => campana(false) },
       { nombre: 'Algo salió mal', modo: 'UN_TIRO', tecla: 'S', emoji: '💿', color: '#8338ec', generar: frenadoDeDisco },
-      { nombre: 'Fanfarria', modo: 'UN_TIRO', tecla: 'V', emoji: '🎺', color: '#ffd60a', archivo: 'assets/mixkit/fanfare-722.mp3' },
+      { nombre: 'Fanfarrias', modo: 'UN_TIRO', tecla: 'V', emoji: '🎺', color: '#ffd60a', archivo: 'assets/usuario/fanfarrias.mp3', reemplazaA: ['Fanfarria'] },
       { nombre: 'Wah wah', modo: 'UN_TIRO', tecla: '6', emoji: '🎺', color: '#6a4c93', archivo: 'assets/mixkit/wahwah-471.mp3' },
       { nombre: 'Remate', modo: 'UN_TIRO', tecla: '7', emoji: '🥁', color: '#f4a261', archivo: 'assets/mixkit/remate-568.mp3' },
     ],
@@ -278,6 +278,7 @@ export function catalogoDeFabrica() {
       { nombre: 'Matraca', modo: 'UN_TIRO', tecla: 'N', emoji: '🎊', color: '#ffbe0b', archivo: 'assets/mixkit/party-horn-527.mp3' },
       { nombre: 'Fuegos', modo: 'UN_TIRO', tecla: 'G', emoji: '🎆', color: '#ff006e', archivo: 'assets/mixkit/firework-3103.mp3' },
       { nombre: 'Ta-Da', modo: 'UN_TIRO', tecla: 'Y', emoji: '✨', color: '#ffd60a', archivo: 'assets/mixkit/tada-638.mp3' },
+      { nombre: 'Queremos pastel', modo: 'UN_TIRO', tecla: '9', emoji: '🎂', color: '#ff6b6b', archivo: 'assets/usuario/queremos-pastel.mp3' },
     ],
     Calle: [
       { nombre: 'Automóvil', modo: 'UN_TIRO', tecla: '1', emoji: '🚗', color: '#3a86ff', archivo: 'assets/mixkit/auto-1538.mp3' },
