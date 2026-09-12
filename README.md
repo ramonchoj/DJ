@@ -16,6 +16,7 @@ La biblioteca de audio vive en Google Drive (`G:\Mi unidad\Musica fiestas`); est
 | [docs/VIRTUALDJ_ARQUITECTURA_BINARIO.md](docs/VIRTUALDJ_ARQUITECTURA_BINARIO.md) | Arquitectura interna del ejecutable: PE, motor de audio (ASIO/WASAPI, Elastique, ffmpeg), stems con DirectML/CUDA, skins XML + VDJScript, plugins, MSI y formato .vdjsample |
 | [docs/ARQUITECTURA_NUESTRA_APP.md](docs/ARQUITECTURA_NUESTRA_APP.md) | Propuesta de arquitectura de nuestra app "Cabina": alcance por versiones, hexagonal con archivos concretos, flujo offline y plan de construcción |
 | [docs/ARQUITECTURA_HEXAGONAL.md](docs/ARQUITECTURA_HEXAGONAL.md) | Arquitectura hexagonal propia de la app: dominio, puertos primarios y secundarios, adaptadores, composición, pruebas y evolución |
+| [app/](app/) | Código fuente de Cabina: la consola de sonidos construida, con 48 pruebas automáticas. [Ver publicada](https://claude.ai/code/artifact/b1fb97b7-03a1-4c2b-adf3-06a4d05dd523) |
 
 ## Regla de trabajo
 

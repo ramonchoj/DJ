@@ -65,5 +65,27 @@ Ver [VIRTUALDJ_ARQUITECTURA_BINARIO.md](VIRTUALDJ_ARQUITECTURA_BINARIO.md): aná
 ## 8. Propuesta de arquitectura de nuestra app "Cabina" (2026-09-12) — superada por el punto 9
 Ver [ARQUITECTURA_NUESTRA_APP.md](ARQUITECTURA_NUESTRA_APP.md): qué copiamos de VirtualDJ y qué no, alcance por versiones (V1 consola de locutor, V2 deck de playlist con automix, V3 dos decks), estructura hexagonal con archivos concretos (domain / application / adapters), flujo de uso offline, decisiones técnicas y plan de construcción en 6 pasos. Pendiente: decidir aspecto visual, sonidos de fábrica, categorías iniciales y nombre.
 
-## 9. Arquitectura hexagonal propia (2026-09-12) — en revisión
+## 9. Arquitectura hexagonal propia (2026-09-12) — completada e implementada, ver punto 10
 Ver [ARQUITECTURA_HEXAGONAL.md](ARQUITECTURA_HEXAGONAL.md): diseño desde cero (sin heredar de VirtualDJ) con regla de dependencias, mapa del hexágono (mermaid), dominio (Tablero/Banco/Sonido, valores ModoDisparo/Ganancia/TeclaRapida, eventos, servicios), puertos primarios (ConsolaAPI) y secundarios (RepositorioTablero, Reproductor, AnalizadorAudio, Empaquetador, Reloj), adaptadores, raíz de composición, carpetas, estrategia de pruebas, offline y evolución a mezclador.
+
+## 10. Cabina — app construida y publicada (2026-09-12) — completado
+Se construyó el sistema completo siguiendo [ARQUITECTURA_HEXAGONAL.md](ARQUITECTURA_HEXAGONAL.md), código en el repo bajo `app/`.
+
+**Publicada en**: https://claude.ai/code/artifact/b1fb97b7-03a1-4c2b-adf3-06a4d05dd523
+
+Qué incluye:
+- Dominio puro (Tablero, Banco, Sonido, ModoDisparo, Ganancia, TeclaRapida, eventos, servicios) sin ninguna dependencia externa.
+- 6 casos de uso (DispararPad, DetenerTodo, AgregarSonido, EditarTablero, PadAleatorio, ExportarImportarTablero) sobre puertos abstractos.
+- Adaptadores: Web Audio (con fades y solapamiento real), IndexedDB (persistencia), analizador de volumen (normalización automática al subir un sonido), UI táctil, teclado, empaquetado JSON para respaldo/restauración, y un sintetizador que genera los 10 sonidos de fábrica (aplausos, air horn, sirena, redoble, "chiste malo"/rimshot, campana correcto/incorrecto, "algo salió mal"/scratch stop, explosión, risas) directamente en el navegador con Web Audio, sin descargar ningún archivo — usa el catálogo definido en [LENGUAJE_Y_FEATURES_RADIO.md](LENGUAJE_Y_FEATURES_RADIO.md).
+
+Pruebas:
+- 48/48 pruebas automáticas (`node --test`) sobre dominio y aplicación, con dobles en memoria, sin navegador.
+- Verificación en navegador real: renderizado correcto confirmado por captura de pantalla y por inspección del árbol de accesibilidad, cero errores de consola y cero peticiones fallidas en todas las corridas.
+- Un bug real encontrado y corregido durante las pruebas: el overlay de "cargando" no se ocultaba porque una regla CSS con `display:flex` tenía más especificidad que el estilo por defecto del atributo `[hidden]`; se corrigió agregando `#cargando[hidden] { display: none; }`.
+- Nota sobre el proceso de prueba: el arnés de automatización de navegador mostró inconsistencia intermitente al reutilizar la misma URL entre corridas (relacionado con caché/bfcache del perfil de pruebas), no relacionada con el código de la app; se confirmó reproduciendo la inicialización manualmente en el navegador (éxito consistente) y usando URLs únicas por corrida (éxito consistente).
+
+Diseño: tema oscuro por defecto con espejo claro vía `prefers-color-scheme`, tipografía Barlow Semi Condensed (títulos/etiquetas, estética de consola de transmisión) + Work Sans (cuerpo), colores distintos por pad de la paleta ya usada en el dominio.
+
+Código en `app/` del repo: `src/` (dominio, aplicación, adaptadores), `test/` (48 pruebas), `index.html` (documento completo para desarrollo local), `artifact_body.html` (contenido publicado), `README.md`.
+
+Pendiente (siguiente sesión, si se pide): probar en un celular real conectado a un parlante Bluetooth; agregar más categorías/sonidos propios; considerar V2 (deck de música con playlist).
