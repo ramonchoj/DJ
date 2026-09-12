@@ -4,7 +4,7 @@
  * No hay manifest: la app NO es instalable, solo abre sin señal.
  * Al cambiar VERSION se descarta el caché anterior en la activación.
  */
-const VERSION = 'cabina-v3.0.2';
+const VERSION = 'cabina-v3.1.0';
 const SHELL = [
   './',
   './index.html',
@@ -23,6 +23,9 @@ const SHELL = [
   './src/dj/adaptadores/ImportadorVirtualDJ.js',
   './src/dj/adaptadores/UIDJ.js',
   './src/dj/adaptadores/GrabadorSesionWebAudio.js',
+  './src/yt/adaptadores/youtube.js',
+  './src/yt/adaptadores/MotorYouTube.js',
+  './src/yt/adaptadores/AnalizadorYouTube.js',
   './src/aplicacion/ConsolaAPI.js',
   './src/aplicacion/puertos/secundarios.js',
   './src/aplicacion/casosDeUso/AgregarSonido.js',

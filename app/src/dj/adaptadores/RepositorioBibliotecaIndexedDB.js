@@ -7,9 +7,9 @@ const PISTAS = 'pistas';
 const AUDIOS = 'audios';
 const ESTADO = 'estado';
 
-function abrir() {
+function abrir(nombre = NOMBRE_BD) {
   return new Promise((resolve, reject) => {
-    const req = indexedDB.open(NOMBRE_BD, VERSION_BD);
+    const req = indexedDB.open(nombre, VERSION_BD);
     req.onupgradeneeded = () => {
       const db = req.result;
       for (const s of [PISTAS, AUDIOS, ESTADO]) if (!db.objectStoreNames.contains(s)) db.createObjectStore(s);
@@ -22,7 +22,7 @@ const pedir = (req) => new Promise((res, rej) => { req.onsuccess = () => res(req
 
 export class RepositorioBibliotecaIndexedDB extends RepositorioBiblioteca {
   #db;
-  constructor() { super(); this.#db = abrir(); }
+  constructor({ nombre = NOMBRE_BD } = {}) { super(); this.#db = abrir(nombre); }
   async #store(nombre, modo) { return (await this.#db).transaction(nombre, modo).objectStore(nombre); }
 
   async cargarPistas() {

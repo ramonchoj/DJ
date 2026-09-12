@@ -220,3 +220,18 @@ dialog.dlg::backdrop { background: rgba(0,0,0,0.5); }
 .pie:hover { opacity: 0.9; }
 .pie-sep { opacity: 0.6; }
 .pie time { font-variant-numeric: tabular-nums; }
+
+/* ======================= modo YouTube ======================= */
+#yt { display: flex; flex-direction: column; gap: 12px; margin-bottom: 18px; }
+#yt[hidden] { display: none; }
+.yt-players { display: grid; grid-template-columns: 1fr 220px 1fr; gap: 12px; }
+.yt-player { background: var(--panel); border: 1px solid var(--linea); border-radius: 14px; padding: 8px; display: flex; flex-direction: column; gap: 6px; }
+.yt-player > div:last-child { aspect-ratio: 16 / 9; min-height: 200px; background: #000; border-radius: 8px; overflow: hidden; }
+.yt-player iframe { width: 100%; height: 100%; display: block; }
+.yt-player--previa > div:last-child { aspect-ratio: 1 / 1; min-height: 200px; }
+.yt-etiqueta { font-family: "Barlow Semi Condensed", sans-serif; font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--texto-tenue); }
+.yt-nota { margin: 0; }
+.deck-onda--barra { height: 10px; min-height: 10px; background: var(--fondo); border-radius: 6px; position: relative; overflow: hidden; cursor: pointer; }
+.deck-onda--barra::after { content: ""; position: absolute; inset: 0; width: calc(var(--p, 0) * 100%); background: var(--onda-color); }
+.deck-controles--yt { grid-template-columns: 1fr; }
+@media (max-width: 900px) { .yt-players { grid-template-columns: 1fr; } .yt-player--previa > div:last-child { aspect-ratio: 16 / 9; } }

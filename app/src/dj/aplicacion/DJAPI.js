@@ -103,8 +103,9 @@ export class DJAPI {
     const duplicada = [...this.#pistas.values()].find((p) => p.archivo === nombreArchivo);
     if (duplicada) return duplicada;
     const a = await this.analizador.analizar(blob);
+    const meta = a.titulo ? Pista.desdeNombreArchivo(a.titulo) : { titulo, artista };
     const pista = new Pista({
-      titulo, artista, archivo: nombreArchivo, duracionSeg: a.duracionSeg, bpm: a.bpm,
+      titulo: meta.titulo, artista: meta.artista, archivo: nombreArchivo, duracionSeg: a.duracionSeg, bpm: a.bpm,
       ganancia: Ganancia.desdeMedicion(a.picoDb), origenAnalisis: a.bpm ? 'propio' : 'ninguno',
     });
     await this.repositorio.guardarAudio(pista.id, blob);

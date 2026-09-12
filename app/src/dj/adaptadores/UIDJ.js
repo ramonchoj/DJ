@@ -12,11 +12,12 @@ const fmt = (seg) => {
  */
 export class UIDJ {
   #raiz; #dj; #busqueda = ''; #animacion = null; #ultimoTick = 0;
-  #canvas = {}; #arrastrandoPista = null;
+  #canvas = {}; #arrastrandoPista = null; #opciones;
 
-  constructor(raiz, dj) {
+  constructor(raiz, dj, opciones = {}) {
     this.#raiz = raiz;
     this.#dj = dj;
+    this.#opciones = { fuente: 'archivos', ...opciones };
     for (const t of Object.values(EventosDJ)) dj.suscribir(t, () => this.render());
     this.#iniciarAnimacion();
   }
@@ -60,8 +61,9 @@ export class UIDJ {
     cab.appendChild(bpm);
     sec.appendChild(cab);
 
-    const onda = document.createElement('canvas');
-    onda.className = 'deck-onda'; onda.width = 600; onda.height = 70;
+    const esYt = this.#opciones.fuente === 'youtube';
+    const onda = document.createElement(esYt ? 'div' : 'canvas');
+    onda.className = esYt ? 'deck-onda deck-onda--barra' : 'deck-onda'; if (!esYt) { onda.width = 600; onda.height = 70; }
     onda.addEventListener('pointerdown', (ev) => {
       if (!d.pista) return;
       const r = onda.getBoundingClientRect();
@@ -107,11 +109,12 @@ export class UIDJ {
     sec.appendChild(transporte);
 
     const controles = el('div', 'deck-controles');
-    controles.appendChild(this.#slider('Tempo', `${d.tempo >= 0 ? '+' : ''}${(d.tempo * 100).toFixed(1)}%`, -0.12, 0.12, 0.001, d.tempo, (v) => this.#dj.fijarTempo(id, v), { doble: () => this.#dj.fijarTempo(id, 0) }));
-    for (const [banda, etiqueta] of [['alta', 'Agudos'], ['media', 'Medios'], ['baja', 'Graves']]) {
+    if (!esYt) controles.appendChild(this.#slider('Tempo', `${d.tempo >= 0 ? '+' : ''}${(d.tempo * 100).toFixed(1)}%`, -0.12, 0.12, 0.001, d.tempo, (v) => this.#dj.fijarTempo(id, v), { doble: () => this.#dj.fijarTempo(id, 0) }));
+    for (const [banda, etiqueta] of (esYt ? [] : [['alta', 'Agudos'], ['media', 'Medios'], ['baja', 'Graves']])) {
       controles.appendChild(this.#slider(etiqueta, `${d.eq[banda] > 0 ? '+' : ''}${d.eq[banda]} dB`, -40, 12, 1, d.eq[banda], (v) => this.#dj.fijarEq(id, banda, v), { doble: () => this.#dj.fijarEq(id, banda, 0), kill: () => this.#dj.fijarEq(id, banda, d.eq[banda] <= -40 ? 0 : -40) }));
     }
     controles.appendChild(this.#slider('Vol', `${Math.round(d.volumen * 100)}%`, 0, 1, 0.01, d.volumen, (v) => this.#dj.fijarVolumen(id, v)));
+    if (esYt) controles.classList.add('deck-controles--yt');
     sec.appendChild(controles);
     return sec;
   }
@@ -201,12 +204,18 @@ export class UIDJ {
     const sec = el('section', 'dj-biblioteca');
     const cab = el('div', 'dj-cab');
     cab.appendChild(el('h3', '', `Biblioteca (${e.pistas.length})`));
-    const importar = el('button', 'boton-secundario', '+ Canciones');
-    importar.onclick = () => this.#importarArchivos();
-    cab.appendChild(importar);
-    const vdj = el('button', 'boton-secundario', '⬆ VirtualDJ database.xml'); vdj.title = 'Importa BPM, tono, cues y puntos de mezcla ya analizados por VirtualDJ';
-    vdj.onclick = () => this.#importarVirtualDJ();
-    cab.appendChild(vdj);
+    if (this.#opciones.fuente === 'youtube') {
+      const importar = el('button', 'boton-primario', '+ Enlaces de YouTube');
+      importar.onclick = () => this.#importarEnlaces();
+      cab.appendChild(importar);
+    } else {
+      const importar = el('button', 'boton-secundario', '+ Canciones');
+      importar.onclick = () => this.#importarArchivos();
+      cab.appendChild(importar);
+      const vdj = el('button', 'boton-secundario', '⬆ VirtualDJ database.xml'); vdj.title = 'Importa BPM, tono, cues y puntos de mezcla ya analizados por VirtualDJ';
+      vdj.onclick = () => this.#importarVirtualDJ();
+      cab.appendChild(vdj);
+    }
     sec.appendChild(cab);
     const buscar = document.createElement('input');
     buscar.type = 'search'; buscar.placeholder = 'Buscar canción, artista o etiqueta…'; buscar.className = 'buscador'; buscar.id = 'dj-buscador'; buscar.value = this.#busqueda;
@@ -214,7 +223,7 @@ export class UIDJ {
     sec.appendChild(buscar);
     const lista = el('div', 'dj-lista');
     const pistas = this.#dj.buscar(this.#busqueda);
-    if (!pistas.length) lista.appendChild(el('p', 'ayuda', e.pistas.length ? 'Nada coincide.' : 'Agrega canciones con "+ Canciones" (mp3, m4a, wav…). Se analizan (BPM, volumen) y quedan guardadas en este dispositivo.'));
+    if (!pistas.length) lista.appendChild(el('p', 'ayuda', e.pistas.length ? 'Nada coincide.' : (this.#opciones.fuente === 'youtube' ? 'Pega enlaces de YouTube con "+ Enlaces de YouTube" (uno por línea). Se leen título y duración; el video suena en su propio reproductor.' : 'Agrega canciones con "+ Canciones" (mp3, m4a, wav…). Se analizan (BPM, volumen) y quedan guardadas en este dispositivo.')));
     for (const p of pistas) {
       const fila = el('div', 'dj-pista');
       fila.draggable = true;
@@ -286,7 +295,7 @@ export class UIDJ {
         const pos = this.#dj.posicion(id);
         sec.querySelector('.deck-pos').textContent = fmt(pos);
         sec.querySelector('.deck-rest').textContent = d.pista ? `-${fmt(d.pista.duracionSeg - pos)}` : '';
-        this.#dibujarOnda(id, d, pos);
+        if (this.#opciones.fuente === 'youtube') { const b = sec.querySelector('.deck-onda--barra'); if (b && d.pista) b.style.setProperty('--p', String(Math.min(1, pos / (d.pista.duracionSeg || 1)))); } else this.#dibujarOnda(id, d, pos);
         const rec = this.#raiz.querySelector('.dj-rec-tiempo');
         if (rec) rec.textContent = fmt(this.#dj.duracionGrabacionSeg());
         const vu = this.#raiz.querySelector(`.dj-vu--${id} .dj-vu-barra`);
@@ -342,6 +351,22 @@ export class UIDJ {
       aviso.remove();
     };
     input.click();
+  }
+
+  #importarEnlaces() {
+    const texto = prompt('Pega uno o varios enlaces de YouTube (uno por línea):');
+    if (!texto) return;
+    const ids = this.#opciones.extraerIds ? this.#opciones.extraerIds(texto) : [];
+    if (!ids.length) { this.#error(new Error('No encontré enlaces de YouTube válidos.')); return; }
+    (async () => {
+      const aviso = this.#aviso(`Leyendo 0/${ids.length}…`);
+      let n = 0;
+      for (const id of ids) {
+        try { await this.#dj.importarArchivo({ videoId: id }, id); } catch (x) { this.#error(x); }
+        n += 1; aviso.textContent = `Leyendo ${n}/${ids.length}…`;
+      }
+      aviso.remove();
+    })();
   }
 
   #importarVirtualDJ() {

@@ -6,6 +6,11 @@ App web tipo soundboard/consola de locutor. Arquitectura hexagonal en JavaScript
 
 Documentación de diseño completa: [../notas/ARQUITECTURA_HEXAGONAL.md](../docs/ARQUITECTURA_HEXAGONAL.md).
 
+## Modo YouTube (v3.1, solo en línea)
+
+Cuarto modo en el selector: las canciones se eligen pegando enlaces de YouTube y se mezclan entre **dos reproductores oficiales de YouTube** (API IFrame), sin descargar nada. Reutiliza la misma fachada `DJAPI` y la misma interfaz `UIDJ` con adaptadores de YouTube (`src/yt/`): `MotorYouTube` (play/pausa/seek, volumen, crossfader con rampas, ducking, loop por temporizador, fin de pista), `AnalizadorYouTube` (título y duración con un reproductor de vista previa). Biblioteca y cola propias (`cabina-yt`). Automix, "mezclar ya", cues y talkover desde los pads funcionan igual.
+Límites honestos: el audio no sale de YouTube, así que no hay EQ, forma de onda, medidor ni BPM automático; el tempo solo admite los pasos de YouTube (0.75/1/1.25…). Necesita internet y funciona en https://cabina.softmotion.mx/ (en el Artifact de Claude el script de YouTube está bloqueado por la política de seguridad).
+
 ## Novedades v3: módulo DJ (ver docs/ANALISIS_FEATURES_VIRTUALDJ.md)
 
 Un sistema de DJ pensado para lo que VirtualDJ no resuelve en una fiesta real: corre en el celular sin instalar nada, funciona sin señal, y la consola de pads y la música viven en un solo tablero con *talkover* automático.
@@ -53,7 +58,7 @@ Ver el análisis completo en `docs/ARQUITECTURA_HEXAGONAL.md` del repo.
 ## Desarrollo
 
 ```bash
-npm test   # 106 pruebas de dominio + aplicación con node --test, sin navegador
+npm test   # 110 pruebas de dominio + aplicación con node --test, sin navegador
 npm run dev  # sirve la carpeta en http://localhost:8080
 ```
 

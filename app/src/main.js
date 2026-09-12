@@ -16,8 +16,11 @@ import { RepositorioBibliotecaIndexedDB } from './dj/adaptadores/RepositorioBibl
 import { ImportadorVirtualDJ } from './dj/adaptadores/ImportadorVirtualDJ.js';
 import { UIDJ } from './dj/adaptadores/UIDJ.js';
 import { GrabadorSesionWebAudio } from './dj/adaptadores/GrabadorSesionWebAudio.js';
+import { MotorYouTube } from './yt/adaptadores/MotorYouTube.js';
+import { AnalizadorYouTube } from './yt/adaptadores/AnalizadorYouTube.js';
+import { extraerVideoIds } from './yt/adaptadores/youtube.js';
 
-export const VERSION_APP = '3.0.2';
+export const VERSION_APP = '3.1.0';
 const CLAVE_MODO = 'cabina.modo';
 
 const BANCOS_FABRICA = {
@@ -67,17 +70,20 @@ function registrarServiceWorker() {
   navigator.serviceWorker.register('./sw.js').catch(() => { /* sin offline extendido, la app sigue funcionando */ });
 }
 
-/** Selector Pads / DJ / Ambos (recordado por dispositivo). */
-function instalarSelectorDeModo() {
+/** Selector Pads / DJ / YouTube / Ambos (recordado por dispositivo). */
+function instalarSelectorDeModo({ alEntrarYouTube }) {
   const botones = [...document.querySelectorAll('.modos .modo')];
   const pads = document.getElementById('app');
   const dj = document.getElementById('dj');
+  const yt = document.getElementById('yt');
   let modo = 'pads';
   try { modo = localStorage.getItem(CLAVE_MODO) || 'pads'; } catch { /* */ }
   const aplicar = (m) => {
     modo = m;
     pads.hidden = m === 'dj';
-    dj.hidden = m === 'pads';
+    dj.hidden = m !== 'dj' && m !== 'ambos';
+    yt.hidden = m !== 'youtube';
+    if (m === 'youtube') alEntrarYouTube();
     document.body.dataset.modo = m;
     for (const b of botones) b.classList.toggle('modo--activo', b.dataset.modo === m);
     try { localStorage.setItem(CLAVE_MODO, m); } catch { /* */ }
@@ -123,7 +129,50 @@ async function iniciar() {
   const ui = new UITactil(document.getElementById('app'), consola);
   new AdaptadorTeclado(consola);
   const uiDj = new UIDJ(document.getElementById('dj'), dj);
-  instalarSelectorDeModo();
+
+  // --- modo YouTube (se crea al entrar por primera vez; necesita internet) ---
+  let djYt = null;
+  const iniciarYouTube = async () => {
+    if (djYt) return;
+    const cont = document.getElementById('yt');
+    cont.innerHTML = `
+      <div class="yt-players">
+        <div class="yt-player"><div class="yt-etiqueta">Deck A</div><div id="yt-player-a"></div></div>
+        <div class="yt-player yt-player--previa"><div class="yt-etiqueta">Vista previa</div><div id="yt-player-previa"></div></div>
+        <div class="yt-player"><div class="yt-etiqueta">Deck B</div><div id="yt-player-b"></div></div>
+      </div>
+      <p class="ayuda yt-nota">Los videos suenan en sus propios reproductores de YouTube (se necesita internet). Sin EQ ni forma de onda: el audio no sale de YouTube. Tempo solo en los pasos que permite YouTube.</p>
+      <div id="yt-ui"></div>`;
+    try {
+      const motorYt = new MotorYouTube({ contenedorA: document.getElementById('yt-player-a'), contenedorB: document.getElementById('yt-player-b') });
+      await motorYt.preparar();
+      djYt = new DJAPI({
+        motor: motorYt,
+        repositorio: new RepositorioBibliotecaIndexedDB({ nombre: 'cabina-yt' }),
+        analizador: new AnalizadorYouTube({ contenedor: document.getElementById('yt-player-previa') }),
+        importador: null,
+        reloj: { ahora: () => Date.now() },
+      });
+      window.__djYt = djYt;
+      await djYt.iniciar();
+      await djYt.fijarBeatmatch(false);
+      const uiYt = new UIDJ(document.getElementById('yt-ui'), djYt, { fuente: 'youtube', extraerIds: extraerVideoIds });
+      uiYt.render();
+      consola.suscribir(TiposEvento.PAD_DISPARADO, ({ bancoId, soundId }) => {
+        const t = consola.estado();
+        try {
+          if (t.bancoPorId(bancoId).esCama || t.ajustes.ducking >= 1) return;
+          const s = t.buscarSonido(soundId)?.sonido;
+          djYt.atenuar(t.ajustes.ducking, s && !s.modo.esLoop() ? Math.round(s.duracionMs / s.tasaReproduccion) : 0);
+        } catch { /* */ }
+      });
+      consola.suscribir(TiposEvento.REPRODUCCION_DETENIDA, ({ todo }) => { if (todo) motorYt.restaurar(); });
+    } catch (e) {
+      console.error(e);
+      cont.innerHTML = `<p class="ayuda" style="padding:24px">${e.message || 'No se pudo iniciar YouTube.'}</p>`;
+    }
+  };
+  instalarSelectorDeModo({ alEntrarYouTube: iniciarYouTube });
 
   // Talkover: cuando suena un pad que no es cama, la música de los decks baja
   // (mismo factor de ducking de los ajustes) mientras dura el pad.
