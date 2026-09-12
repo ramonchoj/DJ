@@ -97,3 +97,16 @@ Los 5 sonidos sin equivalente real en VirtualDJ (Redoble, Chiste malo, Correcto,
 `catalogoDeFabrica()` ahora soporta entradas con `archivo` (se descarga como parte de la carga inicial, igual que las tipografías) además de `generar` (síntesis).
 Verificado: 48/48 pruebas en verde, captura de pantalla con las 3 categorías y 14 pads, cabeceras MP3 válidas en los 9 archivos servidos.
 Republicado: https://claude.ai/code/artifact/b1fb97b7-03a1-4c2b-adf3-06a4d05dd523 (versión 2).
+
+## 12. Despliegue de Cabina en hosting propio (2026-09-12) — completado
+Cabina quedó publicada en dos lugares:
+- Artifact (privado, de trabajo): https://claude.ai/code/artifact/b1fb97b7-03a1-4c2b-adf3-06a4d05dd523
+- **Dominio propio**: https://cabina.softmotion.mx/
+
+Despliegue: servidor de hosting compartido GoDaddy/cPanel (`p3plzcpnl506144.prod.phx3.secureserver.net`), cuenta `k313aoe6wjqm`. Se generó un par de llaves SSH dedicado (`~/.ssh/cabina_softmotion`), autorizado por el usuario en cPanel → Administrador de claves SSH. El host real no se pudo usar vía el dominio público (`softmotion.mx` está detrás de Cloudflare, sin puerto SSH expuesto); se encontró en `~/.ssh/known_hosts` de una conexión previa a otro proyecto (Psymeter) en el mismo servidor.
+
+Subida: como `rsync` no está instalado en la máquina local (Windows/Git Bash), se empaquetó `app/` (sin `test/`, `package.json`, `README.md`) en un `.tar.gz`, se subió por `scp` y se extrajo por SSH directo en `~/cabina.softmotion.mx/` (el document root que GoDaddy ya había creado para el subdominio). 42 archivos, 2.5 MB.
+
+Verificado: los 4 endpoints clave devuelven 200 (index.html, src/main.js, un mp3 de assets, la raíz). Cargado en navegador real sobre el dominio: los 14 pads de fábrica (Golpes, Efectos, Clásicos) renderizan con nombres, teclas y colores correctos.
+
+Para futuras actualizaciones: repetir el mismo empaquetado+scp+extracción, o instalar rsync localmente para sincronizar solo lo que cambió.
