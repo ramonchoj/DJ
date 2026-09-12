@@ -214,3 +214,9 @@ dialog.dlg::backdrop { background: rgba(0,0,0,0.5); }
 
 .boton-rec--on { border-color: var(--peligro); color: var(--peligro); animation: parpadeo 1.2s ease-in-out infinite; }
 .dj-rec-tiempo { font-family: "Barlow Semi Condensed", sans-serif; font-weight: 700; color: var(--peligro); font-variant-numeric: tabular-nums; }
+
+/* ---------- pie discreto: versión y hora de publicación ---------- */
+.pie { display: flex; justify-content: center; align-items: baseline; gap: 8px; padding-block: 28px 4px; font-family: "Barlow Semi Condensed", system-ui, sans-serif; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--texto-tenue); opacity: 0.45; user-select: text; transition: opacity 200ms; }
+.pie:hover { opacity: 0.9; }
+.pie-sep { opacity: 0.6; }
+.pie time { font-variant-numeric: tabular-nums; }

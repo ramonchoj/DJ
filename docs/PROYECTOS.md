@@ -138,3 +138,6 @@ Pedido: automóvil, moto, avión, pregón "se compran colchones…", wah-wah de 
 Síntoma reportado: "no sirve el botón DJ" en cabina.softmotion.mx. Causa: Cloudflare cachea .js/.css 4 h ignorando el Cache-Control del origen; el index.html nuevo llegaba con el main.js viejo (sin el selector de modo).
 Solución definitiva: `tools/deploy.sh` despliega cada versión en `r/<versión>/` (URLs nuevas → caché frío), el index.html (que Cloudflare no cachea) carga `r/<versión>/src/main.js` y un **import map** redirige todos los imports de módulos a esa carpeta; el service worker se registra como `sw.js?v=<versión>`; los audios siguen en `assets/` (inmutables). Conserva las últimas 3 versiones en el servidor. Ya no hace falta purgar Cloudflare tras un despliegue.
 Uso: `bash tools/deploy.sh` (toma la versión de app/package.json). Versión actual desplegada: 3.0.1.
+
+## 18. Pie con versión y hora de publicación (2026-09-12) — completado
+Pie discreto al final de la página (11 px, mayúsculas espaciadas, 45 % de opacidad, sube al pasar el cursor): `v<versión> · <día mes año> · <HH:MM> CDMX`. La versión sale de package.json y la hora la estampa `tools/deploy.sh` en el momento de publicar (zona America/Mexico_City); el `<time>` lleva la fecha ISO en `datetime`. Para el Artifact la hora se estampa al preparar la copia. Versión desplegada: 3.0.2.

@@ -41,7 +41,12 @@ importmap = f'''<script type="importmap">{{"imports":{{"{origen}/src/":"{origen}
 '''
 s = s.replace('<link rel="stylesheet" href="estilos.css">', f'<link rel="stylesheet" href="r/{ver}/estilos.css">\n' + importmap)
 s = s.replace('<script type="module" src="src/main.js"></script>', f'<script type="module" src="r/{ver}/src/main.js"></script>')
-s = re.sub(r'<span class="version">v[^<]*</span>', f'<span class="version">v{ver}</span>', s)
+s = re.sub(r'<span class="pie-version">v[^<]*</span>', f'<span class="pie-version">v{ver}</span>', s)
+import datetime, zoneinfo
+ahora = datetime.datetime.now(zoneinfo.ZoneInfo('America/Mexico_City'))
+meses = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic']
+legible = f"{ahora.day} {meses[ahora.month-1]} {ahora.year} · {ahora:%H:%M} CDMX"
+s = s.replace('{{PUBLICADO_ISO}}', ahora.isoformat(timespec='minutes')).replace('{{PUBLICADO}}', legible)
 assert f'r/{ver}/src/main.js' in s and 'importmap' in s
 open(dst, 'w', encoding='utf-8', newline='\n').write(s)
 PY
