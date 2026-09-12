@@ -1,4 +1,4 @@
-import { RepositorioTablero, Reproductor, AnalizadorAudio, Empaquetador, Reloj } from '../../src/aplicacion/puertos/secundarios.js';
+import { RepositorioTablero, Reproductor, AnalizadorAudio, Empaquetador, Reloj, Grabadora } from '../../src/aplicacion/puertos/secundarios.js';
 
 export class RepositorioEnMemoria extends RepositorioTablero {
   constructor() {
@@ -14,15 +14,15 @@ export class RepositorioEnMemoria extends RepositorioTablero {
 }
 
 export class ReproductorFalso extends Reproductor {
+  #activos = [];
   constructor() {
     super();
     this.preparados = new Set();
     this.disparos = [];
     this.detenidos = [];
+    this.atenuaciones = [];
     this.maestro = 1;
-    this.#activos = [];
   }
-  #activos;
   async preparar(soundId) { this.preparados.add(soundId); }
   disparar(soundId, opciones) {
     const token = `tok_${this.disparos.length}`;
@@ -43,7 +43,11 @@ export class ReproductorFalso extends Reproductor {
     this.#activos = [];
   }
   fijarMaestro(valor) { this.maestro = valor; }
+  atenuar(soundIds, factor, ms) { this.atenuaciones.push({ soundIds: [...soundIds], factor, ms }); }
   activos() { return this.#activos; }
+  nivel() { return 0; }
+  /** Simula que un sonido terminó por sí solo. */
+  simularFin(soundId) { this.#activos = this.#activos.filter((a) => a.soundId !== soundId); }
 }
 
 export class AnalizadorFalso extends AnalizadorAudio {
@@ -55,12 +59,21 @@ export class AnalizadorFalso extends AnalizadorAudio {
 }
 
 export class EmpaquetadorFalso extends Empaquetador {
-  async empaquetar(tablero, audiosPorId) {
-    return { tablero, audiosPorId, esBlobFalso: true };
+  async empaquetar(tablero, audiosPorId) { return { tablero, audiosPorId, esBlobFalso: true }; }
+  async desempaquetar(paquete) { return { tablero: paquete.tablero, audiosPorId: paquete.audiosPorId }; }
+}
+
+export class GrabadoraFalsa extends Grabadora {
+  constructor({ soportada = true, resultado = { esBlobFalso: true, size: 1234, type: 'audio/webm' } } = {}) {
+    super();
+    this._soportada = soportada;
+    this.resultado = resultado;
+    this.estado = 'inactiva';
   }
-  async desempaquetar(paquete) {
-    return { tablero: paquete.tablero, audiosPorId: paquete.audiosPorId };
-  }
+  soportada() { return this._soportada; }
+  async iniciar() { this.estado = 'grabando'; }
+  async detener() { this.estado = 'inactiva'; return this.resultado; }
+  grabando() { return this.estado === 'grabando'; }
 }
 
 export class RelojFalso extends Reloj {
@@ -70,5 +83,5 @@ export class RelojFalso extends Reloj {
 }
 
 export function blobFalso(nombre = 'audio.mp3') {
-  return { esBlobFalso: true, nombre };
+  return { esBlobFalso: true, nombre, size: 100 };
 }

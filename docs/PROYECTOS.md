@@ -110,3 +110,7 @@ Subida: como `rsync` no está instalado en la máquina local (Windows/Git Bash),
 Verificado: los 4 endpoints clave devuelven 200 (index.html, src/main.js, un mp3 de assets, la raíz). Cargado en navegador real sobre el dominio: los 14 pads de fábrica (Golpes, Efectos, Clásicos) renderizan con nombres, teclas y colores correctos.
 
 Para futuras actualizaciones: repetir el mismo empaquetado+scp+extracción, o instalar rsync localmente para sincronizar solo lo que cambió.
+
+## 13. Cabina v2 — reingeniería completa (2026-09-12) — completado, en pruebas
+Ver [REINGENIERIA_CABINA_V2.md](REINGENIERIA_CABINA_V2.md). Se revisó la v1 contra la lista de 15 features de los análisis: cubría 8. La v2 implementa los 7 restantes (pestañas, buscador, arrastrar/soltar, volumen por pad, tono en vivo, grabadora con micrófono, modo uno-a-la-vez) más camas musicales con ducking, diálogos propios, VU, service worker offline y migración automática de tableros v1. 78/78 pruebas (`node --test`). Verificado en navegador: 5 bancos (incluida "Camas" ♫ vacía para loops propios), disparo, búsqueda, pestañas, SW activo, micrófono soportado.
+Publicado en el repo (`app/`, v2.0.0) y en el Artifact de pruebas. `cabina.softmotion.mx` sigue en v1 hasta aprobar la v2.

@@ -1,5 +1,6 @@
 import { ErrorValidacion, ErrorConflicto, ErrorNoEncontrado } from './errores.js';
 import { Banco } from './Banco.js';
+import { Ajustes } from './valores/Ajustes.js';
 
 /**
  * Agregado raíz: el tablero completo. Es el único punto de entrada para
@@ -7,9 +8,10 @@ import { Banco } from './Banco.js';
  * nombres de banco únicos, tecla rápida única en todo el tablero).
  */
 export class Tablero {
-  constructor({ bancos = [], volumenMaestro = 1, version = 1 } = {}) {
+  constructor({ bancos = [], volumenMaestro = 1, ajustes = Ajustes.porDefecto(), version = 2 } = {}) {
     this.bancos = [...bancos].sort((a, b) => a.orden - b.orden);
     this.volumenMaestro = Math.min(1, Math.max(0, volumenMaestro));
+    this.ajustes = ajustes instanceof Ajustes ? ajustes : new Ajustes(ajustes || {});
     this.version = version;
     this.#validar();
     Object.freeze(this.bancos);
@@ -59,6 +61,19 @@ export class Tablero {
     return null;
   }
 
+  /** Busca por texto en todos los bancos. Devuelve [{banco, sonido, slot}]. */
+  buscar(texto) {
+    const resultados = [];
+    for (const banco of this.bancos) {
+      for (const sonido of banco.listaSonidos()) {
+        if (sonido.coincideCon(texto)) {
+          resultados.push({ banco, sonido, slot: banco.slotDe(sonido.id) });
+        }
+      }
+    }
+    return resultados;
+  }
+
   sonidoConTecla(caracter) {
     const k = caracter.toUpperCase();
     for (const banco of this.bancos) {
@@ -87,13 +102,27 @@ export class Tablero {
     return new Tablero({ ...this, volumenMaestro: valor });
   }
 
-  crearBanco(nombre, color) {
+  conAjustes(cambios) {
+    return new Tablero({ ...this, ajustes: this.ajustes.con(cambios) });
+  }
+
+  crearBanco(nombre, color, { esCama = false } = {}) {
     if (this.bancoPorNombre(nombre)) {
       throw new ErrorConflicto(`Ya existe un banco llamado "${nombre}"`);
     }
     const orden = this.bancos.length ? Math.max(...this.bancos.map((b) => b.orden)) + 1 : 0;
-    const banco = new Banco({ nombre, color, orden });
+    const banco = new Banco({ nombre, color, orden, esCama });
     return this.conBanco(banco);
+  }
+
+  /** Reordena los bancos según la lista de ids dada (los no listados van al final). */
+  conBancosReordenados(idsEnOrden) {
+    const posicion = new Map(idsEnOrden.map((id, i) => [id, i]));
+    const bancos = this.bancos.map((b) => {
+      const p = posicion.has(b.id) ? posicion.get(b.id) : idsEnOrden.length + b.orden;
+      return b.conOrden(p);
+    });
+    return new Tablero({ ...this, bancos });
   }
 
   conSonidoAgregado(bancoId, slot, sonido) {
@@ -115,9 +144,20 @@ export class Tablero {
     return this.conBanco(banco);
   }
 
+  /**
+   * Mueve un sonido a otro banco/slot. Si el destino está ocupado y está en
+   * el mismo banco, intercambia (arrastrar y soltar); si está ocupado en
+   * otro banco, lanza conflicto.
+   */
   moverSonido(soundId, bancoDestinoId, slotDestino) {
     const encontrado = this.buscarSonido(soundId);
     if (!encontrado) throw new ErrorNoEncontrado(`No existe el sonido ${soundId}`);
+    const origen = encontrado.banco;
+    if (origen.id === bancoDestinoId) {
+      const slotOrigen = origen.slotDe(soundId);
+      if (slotOrigen === slotDestino) return this;
+      return this.conBanco(origen.conSlotsIntercambiados(slotOrigen, slotDestino));
+    }
     const sinOrigen = this.sinSonido(soundId);
     return sinOrigen.conSonidoAgregado(bancoDestinoId, slotDestino, encontrado.sonido);
   }
@@ -126,10 +166,15 @@ export class Tablero {
     return this.bancos.flatMap((b) => b.listaSonidos());
   }
 
+  bancoDe(soundId) {
+    return this.buscarSonido(soundId)?.banco || null;
+  }
+
   toJSON() {
     return {
       version: this.version,
       volumenMaestro: this.volumenMaestro,
+      ajustes: this.ajustes.toJSON(),
       bancos: this.bancos.map((b) => b.toJSON()),
     };
   }
@@ -141,6 +186,8 @@ export class Tablero {
   static desdeJSON(json, SonidoClase) {
     return new Tablero({
       ...json,
+      version: 2,
+      ajustes: new Ajustes(json.ajustes || {}),
       bancos: (json.bancos || []).map((b) => Banco.desdeJSON(b, SonidoClase)),
     });
   }

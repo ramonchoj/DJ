@@ -2,14 +2,16 @@ import { Reproductor } from '../../aplicacion/puertos/secundarios.js';
 
 /**
  * Adaptador secundario: reproduce sonidos con la Web Audio API.
- * Un AudioContext, un GainNode maestro, un GainNode por reproducción activa
- * (para poder aplicar fade y detenerla sola sin afectar a las demás).
+ * Un AudioContext, un GainNode maestro (con AnalyserNode para el medidor),
+ * un GainNode por reproducción activa (fade, ducking y detener individual).
  */
 export class ReproductorWebAudio extends Reproductor {
   #ctx;
   #maestro;
+  #analizador;
+  #muestras;
   #buffers = new Map(); // soundId -> AudioBuffer
-  #activos = new Map(); // token -> { soundId, bancoId, modo, source, gain }
+  #activos = new Map(); // token -> { soundId, bancoId, modo, source, gain, ganancia, inicio, duracion, loop }
   #contador = 0;
 
   constructor() {
@@ -18,7 +20,11 @@ export class ReproductorWebAudio extends Reproductor {
     this.#ctx = new Ctx();
     this.#maestro = this.#ctx.createGain();
     this.#maestro.gain.value = 1;
-    this.#maestro.connect(this.#ctx.destination);
+    this.#analizador = this.#ctx.createAnalyser();
+    this.#analizador.fftSize = 256;
+    this.#muestras = new Uint8Array(this.#analizador.fftSize);
+    this.#maestro.connect(this.#analizador);
+    this.#analizador.connect(this.#ctx.destination);
   }
 
   async reanudar() {
@@ -33,12 +39,17 @@ export class ReproductorWebAudio extends Reproductor {
     this.#buffers.set(soundId, audioBuffer);
   }
 
-  disparar(soundId, { bancoId, ganancia = 1, loop = false, modo } = {}) {
+  olvidar(soundId) {
+    this.#buffers.delete(soundId);
+  }
+
+  disparar(soundId, { bancoId, ganancia = 1, tasa = 1, loop = false, modo } = {}) {
     const buffer = this.#buffers.get(soundId);
     if (!buffer) throw new Error(`Sonido no preparado en el reproductor: ${soundId}`);
     const source = this.#ctx.createBufferSource();
     source.buffer = buffer;
     source.loop = loop;
+    source.playbackRate.value = tasa;
     const gain = this.#ctx.createGain();
     gain.gain.value = ganancia;
     source.connect(gain);
@@ -47,7 +58,12 @@ export class ReproductorWebAudio extends Reproductor {
 
     this.#contador += 1;
     const token = `tok_${this.#contador}`;
-    this.#activos.set(token, { soundId, bancoId, modo, source, gain });
+    const entrada = {
+      soundId, bancoId, modo, source, gain, ganancia, loop,
+      inicio: this.#ctx.currentTime,
+      duracion: buffer.duration / tasa,
+    };
+    this.#activos.set(token, entrada);
 
     source.onended = () => {
       if (this.#activos.get(token)?.source === source) this.#activos.delete(token);
@@ -96,9 +112,49 @@ export class ReproductorWebAudio extends Reproductor {
     this.#maestro.gain.setTargetAtTime(valor, this.#ctx.currentTime, 0.02);
   }
 
+  /**
+   * Ducking: baja los sonidos indicados al factor dado (rampa de 80 ms) y,
+   * si ms > 0, los devuelve a su ganancia original al terminar ese tiempo.
+   * Con ms = 0 (el sonido nuevo es un loop) se quedan abajo hasta que se
+   * dispare otra cosa o se detengan.
+   */
+  atenuar(soundIds, factor, ms) {
+    const ids = new Set(soundIds);
+    const ahora = this.#ctx.currentTime;
+    for (const entrada of this.#activos.values()) {
+      if (!ids.has(entrada.soundId)) continue;
+      const g = entrada.gain.gain;
+      g.cancelScheduledValues(ahora);
+      g.setValueAtTime(g.value, ahora);
+      g.linearRampToValueAtTime(entrada.ganancia * factor, ahora + 0.08);
+      if (ms > 0) {
+        const fin = ahora + ms / 1000;
+        g.setValueAtTime(entrada.ganancia * factor, fin);
+        g.linearRampToValueAtTime(entrada.ganancia, fin + 0.25);
+      }
+    }
+  }
+
   activos() {
+    const ahora = this.#ctx.currentTime;
     return [...this.#activos.entries()].map(([token, e]) => ({
-      token, soundId: e.soundId, bancoId: e.bancoId, modo: e.modo,
+      token,
+      soundId: e.soundId,
+      bancoId: e.bancoId,
+      modo: e.modo,
+      loop: e.loop,
+      progreso: e.loop ? ((ahora - e.inicio) % e.duracion) / e.duracion : Math.min(1, (ahora - e.inicio) / e.duracion),
     }));
+  }
+
+  /** Nivel de salida 0..1 (pico de la última ventana). */
+  nivel() {
+    this.#analizador.getByteTimeDomainData(this.#muestras);
+    let pico = 0;
+    for (let i = 0; i < this.#muestras.length; i++) {
+      const v = Math.abs(this.#muestras[i] - 128) / 128;
+      if (v > pico) pico = v;
+    }
+    return pico;
   }
 }

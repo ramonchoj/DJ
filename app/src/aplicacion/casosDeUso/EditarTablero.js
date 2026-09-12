@@ -1,8 +1,8 @@
 import { TiposEvento } from '../../dominio/eventos.js';
 
 /**
- * Caso de uso: operaciones de edición del tablero (CRUD sobre bancos y
- * sonidos). Cada método persiste y publica el evento correspondiente.
+ * Caso de uso: operaciones de edición del tablero (CRUD sobre bancos,
+ * sonidos y ajustes). Cada método persiste y publica el evento correspondiente.
  */
 export class EditarTablero {
   constructor({ repositorio, reproductor, bus }) {
@@ -17,8 +17,8 @@ export class EditarTablero {
     return tableroNuevo;
   }
 
-  async crearBanco(tablero, nombre, color) {
-    const t = tablero.crearBanco(nombre, color);
+  async crearBanco(tablero, nombre, color, opciones = {}) {
+    const t = tablero.crearBanco(nombre, color, opciones);
     this.bus.publicar(TiposEvento.BANCO_CREADO, { nombre });
     return this.#persistirYPublicar(t);
   }
@@ -28,10 +28,24 @@ export class EditarTablero {
     return this.#persistirYPublicar(tablero.conBanco(banco));
   }
 
+  async editarBanco(tablero, bancoId, { nombre, color, esCama } = {}) {
+    let banco = tablero.bancoPorId(bancoId);
+    if (nombre !== undefined) banco = banco.renombrado(nombre);
+    if (color !== undefined) banco = banco.conColor(color);
+    if (esCama !== undefined) banco = banco.comoCama(esCama);
+    return this.#persistirYPublicar(tablero.conBanco(banco));
+  }
+
+  async reordenarBancos(tablero, idsEnOrden) {
+    return this.#persistirYPublicar(tablero.conBancosReordenados(idsEnOrden));
+  }
+
   async eliminarBanco(tablero, bancoId) {
     const banco = tablero.bancoPorId(bancoId);
     for (const sonido of banco.listaSonidos()) {
+      this.reproductor.detenerSonido(sonido.id, { fadeMs: 30 });
       await this.repositorio.eliminarAudio(sonido.id);
+      this.reproductor.olvidar?.(sonido.id);
     }
     const t = tablero.sinBanco(bancoId);
     this.bus.publicar(TiposEvento.BANCO_ELIMINADO, { bancoId });
@@ -54,6 +68,7 @@ export class EditarTablero {
   async eliminarSonido(tablero, soundId) {
     this.reproductor.detenerSonido(soundId, { fadeMs: 30 });
     await this.repositorio.eliminarAudio(soundId);
+    this.reproductor.olvidar?.(soundId);
     const t = tablero.sinSonido(soundId);
     this.bus.publicar(TiposEvento.SONIDO_ELIMINADO, { soundId });
     return this.#persistirYPublicar(t);
@@ -63,6 +78,12 @@ export class EditarTablero {
     const t = tablero.conVolumenMaestro(valor);
     this.reproductor.fijarMaestro(valor);
     this.bus.publicar(TiposEvento.VOLUMEN_MAESTRO_CAMBIADO, { valor });
+    return this.#persistirYPublicar(t);
+  }
+
+  async editarAjustes(tablero, cambios) {
+    const t = tablero.conAjustes(cambios);
+    this.bus.publicar(TiposEvento.AJUSTES_CAMBIADOS, { ajustes: t.ajustes });
     return this.#persistirYPublicar(t);
   }
 }

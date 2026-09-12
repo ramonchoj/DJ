@@ -7,6 +7,7 @@ import { AgregarSonido } from './casosDeUso/AgregarSonido.js';
 import { EditarTablero } from './casosDeUso/EditarTablero.js';
 import { PadAleatorio } from './casosDeUso/PadAleatorio.js';
 import { ExportarImportarTablero } from './casosDeUso/ExportarImportarTablero.js';
+import { GrabarSonido } from './casosDeUso/GrabarSonido.js';
 
 /**
  * Puerto primario (fachada): la única puerta de entrada que usan los
@@ -17,7 +18,7 @@ export class ConsolaAPI {
   #tablero = Tablero.vacio();
   #bus = new BusEventos();
 
-  constructor({ repositorio, reproductor, analizador, empaquetador, reloj }) {
+  constructor({ repositorio, reproductor, analizador, empaquetador, reloj, grabadora = null }) {
     this.repositorio = repositorio;
     this.reproductor = reproductor;
     this.reloj = reloj;
@@ -28,6 +29,7 @@ export class ConsolaAPI {
     this.ucEditar = new EditarTablero({ repositorio, reproductor, bus: this.#bus });
     this.ucAleatorio = new PadAleatorio({ repositorio, reproductor, bus: this.#bus });
     this.ucExportarImportar = new ExportarImportarTablero({ repositorio, reproductor, empaquetador, bus: this.#bus });
+    this.ucGrabar = new GrabarSonido({ repositorio, analizador, reproductor, grabadora, bus: this.#bus });
 
     this.#bus.suscribir(TiposEvento.TABLERO_CAMBIADO, ({ tablero }) => {
       this.#tablero = tablero;
@@ -49,66 +51,44 @@ export class ConsolaAPI {
     return this.#tablero;
   }
 
-  estado() {
-    return this.#tablero;
-  }
+  estado() { return this.#tablero; }
+  suscribir(tipo, callback) { return this.#bus.suscribir(tipo, callback); }
 
-  suscribir(tipo, callback) {
-    return this.#bus.suscribir(tipo, callback);
-  }
+  // --- reproducción ---
+  async dispararPad(bancoId, slot, opciones = {}) { return this.ucDisparar.ejecutar(this.#tablero, bancoId, slot, opciones); }
+  detenerTodo(opciones = {}) { return this.ucDetenerTodo.ejecutar(opciones); }
+  async padAleatorio(bancoId) { return this.ucAleatorio.ejecutar(this.#tablero, bancoId); }
+  activos() { return this.reproductor.activos(); }
+  nivel() { return this.reproductor.nivel ? this.reproductor.nivel() : 0; }
 
-  async dispararPad(bancoId, slot, opciones = {}) {
-    return this.ucDisparar.ejecutar(this.#tablero, bancoId, slot, opciones);
-  }
+  // --- sonidos ---
+  async agregarSonido(datos) { const { tablero } = await this.ucAgregar.ejecutar(this.#tablero, datos); return tablero; }
+  async editarSonido(soundId, cambios) { return this.ucEditar.editarSonido(this.#tablero, soundId, cambios); }
+  async moverSonido(soundId, bancoDestinoId, slotDestino) { return this.ucEditar.moverSonido(this.#tablero, soundId, bancoDestinoId, slotDestino); }
+  async eliminarSonido(soundId) { return this.ucEditar.eliminarSonido(this.#tablero, soundId); }
+  buscar(texto) { return this.#tablero.buscar(texto); }
 
-  detenerTodo(opciones = {}) {
-    return this.ucDetenerTodo.ejecutar(opciones);
-  }
+  // --- bancos ---
+  async crearBanco(nombre, color, opciones) { return this.ucEditar.crearBanco(this.#tablero, nombre, color, opciones); }
+  async renombrarBanco(bancoId, nuevoNombre) { return this.ucEditar.renombrarBanco(this.#tablero, bancoId, nuevoNombre); }
+  async editarBanco(bancoId, cambios) { return this.ucEditar.editarBanco(this.#tablero, bancoId, cambios); }
+  async reordenarBancos(idsEnOrden) { return this.ucEditar.reordenarBancos(this.#tablero, idsEnOrden); }
+  async eliminarBanco(bancoId) { return this.ucEditar.eliminarBanco(this.#tablero, bancoId); }
 
-  async agregarSonido(datos) {
-    const { tablero } = await this.ucAgregar.ejecutar(this.#tablero, datos);
-    return tablero;
-  }
+  // --- ajustes ---
+  async fijarVolumenMaestro(valor) { return this.ucEditar.fijarVolumenMaestro(this.#tablero, valor); }
+  async editarAjustes(cambios) { return this.ucEditar.editarAjustes(this.#tablero, cambios); }
 
-  async crearBanco(nombre, color) {
-    return this.ucEditar.crearBanco(this.#tablero, nombre, color);
-  }
+  // --- grabadora ---
+  grabacionSoportada() { return this.ucGrabar.soportada(); }
+  grabando() { return this.ucGrabar.grabando(); }
+  async iniciarGrabacion() { return this.ucGrabar.iniciar(); }
+  async detenerGrabacion(datos) { const { tablero } = await this.ucGrabar.detenerYGuardar(this.#tablero, datos); return tablero; }
+  async cancelarGrabacion() { return this.ucGrabar.cancelar(); }
 
-  async renombrarBanco(bancoId, nuevoNombre) {
-    return this.ucEditar.renombrarBanco(this.#tablero, bancoId, nuevoNombre);
-  }
-
-  async eliminarBanco(bancoId) {
-    return this.ucEditar.eliminarBanco(this.#tablero, bancoId);
-  }
-
-  async editarSonido(soundId, cambios) {
-    return this.ucEditar.editarSonido(this.#tablero, soundId, cambios);
-  }
-
-  async moverSonido(soundId, bancoDestinoId, slotDestino) {
-    return this.ucEditar.moverSonido(this.#tablero, soundId, bancoDestinoId, slotDestino);
-  }
-
-  async eliminarSonido(soundId) {
-    return this.ucEditar.eliminarSonido(this.#tablero, soundId);
-  }
-
-  async fijarVolumenMaestro(valor) {
-    return this.ucEditar.fijarVolumenMaestro(this.#tablero, valor);
-  }
-
-  async padAleatorio(bancoId) {
-    return this.ucAleatorio.ejecutar(this.#tablero, bancoId);
-  }
-
-  async exportarTablero() {
-    return this.ucExportarImportar.exportar(this.#tablero);
-  }
-
-  async importarTablero(blob, opciones = {}) {
-    return this.ucExportarImportar.importar(blob, { ...opciones, tableroActual: this.#tablero });
-  }
+  // --- respaldo ---
+  async exportarTablero() { return this.ucExportarImportar.exportar(this.#tablero); }
+  async importarTablero(blob, opciones = {}) { return this.ucExportarImportar.importar(blob, { ...opciones, tableroActual: this.#tablero }); }
 }
 
 export { Sonido };

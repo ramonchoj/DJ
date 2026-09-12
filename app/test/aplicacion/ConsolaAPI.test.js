@@ -83,18 +83,24 @@ test('UN_TIRO no se dispara dos veces al soltar el pad (bug de doble reproducciÃ
   assert.equal(reproductor.disparos.length, 1, 'el sonido debe sonar una sola vez por toque');
 });
 
-test('LOOP tampoco se dispara al soltar el pad (solo al volver a tocarlo)', async () => {
+test('LOOP: soltar no dispara; un segundo toque lo detiene; un tercero lo vuelve a arrancar', async () => {
   const { consola, reproductor } = nuevaConsola();
   await consola.iniciar();
   let t = await consola.crearBanco('Camas', '#111');
   t = await consola.agregarSonido({ bancoId: t.bancos[0].id, slot: 0, nombre: 'Cama', blob: blobFalso(), modo: ModoDisparo.LOOP });
   const banco = t.bancos[0];
+  const soundId = t.bancos[0].sonidoEn(0).id;
 
   await consola.dispararPad(banco.id, 0, { presionado: true });
   await consola.dispararPad(banco.id, 0, { presionado: false });
-  assert.equal(reproductor.disparos.length, 1);
+  assert.equal(reproductor.disparos.length, 1, 'soltar no dispara');
 
-  await consola.dispararPad(banco.id, 0, { presionado: true }); // segundo toque real: sÃ­ debe sonar
+  await consola.dispararPad(banco.id, 0, { presionado: true }); // segundo toque: detiene el loop
+  assert.equal(reproductor.disparos.length, 1);
+  assert.ok(reproductor.detenidos.some((d) => d.soundId === soundId), 'el loop activo se detiene');
+  assert.equal(reproductor.activos().length, 0);
+
+  await consola.dispararPad(banco.id, 0, { presionado: true }); // tercer toque: vuelve a sonar
   assert.equal(reproductor.disparos.length, 2);
 });
 

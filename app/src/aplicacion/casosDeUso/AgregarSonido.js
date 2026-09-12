@@ -15,7 +15,7 @@ export class AgregarSonido {
     this.bus = bus;
   }
 
-  async ejecutar(tablero, { bancoId, slot, nombre, blob, origen = 'SUBIDO', color, modo, teclaRapida }) {
+  async ejecutar(tablero, { bancoId, slot, nombre, blob, origen = 'SUBIDO', color, emoji, modo, teclaRapida }) {
     const banco = tablero.bancoPorId(bancoId);
     const slotFinal = slot ?? banco.primerSlotLibre();
 
@@ -25,6 +25,7 @@ export class AgregarSonido {
     const sonido = new Sonido({
       nombre,
       color,
+      emoji,
       modo,
       teclaRapida,
       ganancia,
