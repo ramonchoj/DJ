@@ -18,9 +18,17 @@ export class DispararPad {
     const sonido = banco.sonidoEn(slot);
     if (!sonido) throw new ErrorNoEncontrado(`No hay sonido en el banco "${banco.nombre}", slot ${slot}`);
 
-    if (sonido.modo.esMantener() && !presionado) {
-      this.reproductor.detenerSonido(sonido.id, { fadeMs: 30 });
-      this.bus.publicar(TiposEvento.REPRODUCCION_DETENIDA, { soundId: sonido.id });
+    if (sonido.modo.esMantener()) {
+      if (!presionado) {
+        this.reproductor.detenerSonido(sonido.id, { fadeMs: 30 });
+        this.bus.publicar(TiposEvento.REPRODUCCION_DETENIDA, { soundId: sonido.id });
+        return { sonido, token: null };
+      }
+      // presionado === true: sigue abajo y dispara normalmente.
+    } else if (!presionado) {
+      // Para cualquier modo que no sea MANTENER, el evento de "soltar" (pointerup/keyup)
+      // no significa nada: sin este corte, cada toque disparaba el sonido dos veces
+      // (una al presionar y otra al soltar), sonando como si se repitiera solo.
       return { sonido, token: null };
     }
 

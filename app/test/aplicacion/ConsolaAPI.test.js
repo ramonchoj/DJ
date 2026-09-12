@@ -70,6 +70,34 @@ test('detenerTodo llama detenerTodos del reproductor y publica el evento', async
   assert.equal(recibido, true);
 });
 
+test('UN_TIRO no se dispara dos veces al soltar el pad (bug de doble reproducción)', async () => {
+  const { consola, reproductor } = nuevaConsola();
+  await consola.iniciar();
+  let t = await consola.crearBanco('Golpes', '#111');
+  t = await consola.agregarSonido({ bancoId: t.bancos[0].id, slot: 0, nombre: 'Air Horn', blob: blobFalso() });
+  const banco = t.bancos[0];
+
+  await consola.dispararPad(banco.id, 0, { presionado: true });  // pointerdown / keydown
+  await consola.dispararPad(banco.id, 0, { presionado: false }); // pointerup / keyup
+
+  assert.equal(reproductor.disparos.length, 1, 'el sonido debe sonar una sola vez por toque');
+});
+
+test('LOOP tampoco se dispara al soltar el pad (solo al volver a tocarlo)', async () => {
+  const { consola, reproductor } = nuevaConsola();
+  await consola.iniciar();
+  let t = await consola.crearBanco('Camas', '#111');
+  t = await consola.agregarSonido({ bancoId: t.bancos[0].id, slot: 0, nombre: 'Cama', blob: blobFalso(), modo: ModoDisparo.LOOP });
+  const banco = t.bancos[0];
+
+  await consola.dispararPad(banco.id, 0, { presionado: true });
+  await consola.dispararPad(banco.id, 0, { presionado: false });
+  assert.equal(reproductor.disparos.length, 1);
+
+  await consola.dispararPad(banco.id, 0, { presionado: true }); // segundo toque real: sí debe sonar
+  assert.equal(reproductor.disparos.length, 2);
+});
+
 test('modo MANTENER: soltar el pad detiene solo ese sonido, no todo', async () => {
   const { consola, reproductor } = nuevaConsola();
   await consola.iniciar();
