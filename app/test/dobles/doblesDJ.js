@@ -18,7 +18,7 @@ export class MotorFalso extends MotorDJ {
   saltar(id, seg) { this.decks[id].posicion = seg; this.llamadas.push(['saltar', id, seg]); }
   posicion(id) { return this.decks[id].posicion; }
   duracion(id) { return this.decks[id].duracion; }
-  fijarTasa(id, t) { this.decks[id].tasa = t; }
+  fijarTasa(id, t) { this.decks[id].tasa = t; this.llamadas.push(['fijarTasa', id, t]); }
   fijarLoop(id, l) { this.decks[id].loop = l; }
   fijarEq(id, eq) { this.decks[id].eq = { ...eq }; }
   fijarGananciaPista(id, g) { this.decks[id].ganancia = g; }

@@ -244,10 +244,29 @@ export class DJAPI {
     this.#bus.publicar(EventosDJ.DECK_CAMBIADO, { deckId });
   }
 
+  /** Fija a mano el BPM de la pista de un deck (tap tempo / valor escrito). Persiste en la biblioteca. */
+  async fijarBpm(deckId, bpm) {
+    const deck = this.#decks[deckId];
+    if (!deck.pista) throw new ErrorValidacion(`El deck ${deckId} no tiene pista`);
+    const v = Math.round(Number(bpm) * 10) / 10;
+    if (!(v >= 40 && v <= 250)) throw new ErrorValidacion('El BPM debe estar entre 40 y 250');
+    const pista = deck.pista.conAnalisis({ bpm: v, origenAnalisis: 'propio' });
+    await this.repositorio.guardarPista(pista);
+    this.#pistas.set(pista.id, pista);
+    this.#decks[deckId] = deck.con({ pista });
+    const otro = this.otroDeck(deckId);
+    if (this.#decks[otro].pista?.id === pista.id) this.#decks[otro] = this.#decks[otro].con({ pista });
+    if (deck.loopBeats) this.#aplicarLoop(deckId);
+    this.#bus.publicar(EventosDJ.BIBLIOTECA_CAMBIADA, { pista });
+    this.#bus.publicar(EventosDJ.DECK_CAMBIADO, { deckId });
+    return pista;
+  }
+
   /** Iguala el tempo de este deck al BPM efectivo del otro (sync). */
   sincronizar(deckId) {
     const otro = this.#decks[this.otroDeck(deckId)];
     const propio = this.#decks[deckId];
+    if (!otro.bpmEfectivo || !propio.pista?.bpm) throw new ErrorValidacion('Para SYNC los dos decks necesitan BPM. En YouTube márcalo con TAP (toca el botón al ritmo 8 veces).');
     const t = tempoParaIgualar(otro.bpmEfectivo, propio.pista?.bpm);
     this.fijarTempo(deckId, t);
     return t;

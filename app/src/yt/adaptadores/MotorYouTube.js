@@ -142,10 +142,22 @@ export class MotorYouTube extends MotorDJ {
   duracion(id) { return this.#estado[id].duracion || this.#players[id]?.getDuration?.() || 0; }
 
   fijarTasa(id, tasa) {
-    const e = this.#estado[id];
-    e.tasa = tasaMasCercana(tasa, e.tasasDisponibles || undefined);
-    this.#players[id]?.setPlaybackRate?.(e.tasa);
+    const e = this.#estado[id]; const p = this.#players[id];
+    const pedida = Math.round(Math.max(0.25, Math.min(2, tasa)) * 1000) / 1000;
+    // El reproductor embebido moderno acepta tasas finas (p. ej. 1.04); el
+    // antiguo solo los pasos de 0.25. Se pide la exacta y se comprueba.
+    if (p?.setPlaybackRate) {
+      p.setPlaybackRate(pedida);
+      const real = Number(p.getPlaybackRate?.());
+      if (Number.isFinite(real) && Math.abs(real - pedida) < 0.005) { e.tasa = pedida; e.tasaFina = true; return; }
+      e.tasaFina = false;
+    }
+    e.tasa = tasaMasCercana(pedida, e.tasasDisponibles || undefined);
+    p?.setPlaybackRate?.(e.tasa);
   }
+
+  /** Tasa realmente aplicada (YouTube puede redondear). */
+  tasaReal(id) { return this.#estado[id].tasa; }
 
   fijarLoop(id, loop) {
     clearInterval(this.#loops[id]);

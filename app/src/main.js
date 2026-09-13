@@ -17,10 +17,11 @@ import { ImportadorVirtualDJ } from './dj/adaptadores/ImportadorVirtualDJ.js';
 import { UIDJ } from './dj/adaptadores/UIDJ.js';
 import { GrabadorSesionWebAudio } from './dj/adaptadores/GrabadorSesionWebAudio.js';
 import { MotorYouTube } from './yt/adaptadores/MotorYouTube.js';
+import { UIBuscadorYouTube } from './yt/adaptadores/UIBuscadorYouTube.js';
 import { AnalizadorYouTube } from './yt/adaptadores/AnalizadorYouTube.js';
 import { extraerVideoIds } from './yt/adaptadores/youtube.js';
 
-export const VERSION_APP = '3.4.2';
+export const VERSION_APP = '3.5.0';
 const CLAVE_MODO = 'cabina.modo';
 
 const BANCOS_FABRICA = {
@@ -150,12 +151,13 @@ async function iniciar() {
         <button type="submit" class="boton-primario">+ Agregar</button>
         <span id="yt-estado" class="ayuda" aria-live="polite">Conectando con YouTube…</span>
       </form>
+      <div id="yt-buscador"></div>
       <div class="yt-players">
         <div class="yt-player"><div class="yt-etiqueta">Deck A</div><div id="yt-player-a"></div></div>
         <div class="yt-player yt-player--previa"><div class="yt-etiqueta">Vista previa</div><div id="yt-player-previa"></div></div>
         <div class="yt-player"><div class="yt-etiqueta">Deck B</div><div id="yt-player-b"></div></div>
       </div>
-      <p class="ayuda yt-nota">Los videos suenan en sus propios reproductores de YouTube (se necesita internet). Sin EQ ni forma de onda: el audio no sale de YouTube. Tempo solo en los pasos que permite YouTube. Al cargar un video en un deck se precargan ~90 s en silencio (barra tenue = buffer); con ⏬ se piden 2 min más.</p>
+      <p class="ayuda yt-nota">Los videos suenan en sus propios reproductores de YouTube (se necesita internet). Sin EQ ni forma de onda: el audio no sale de YouTube. Tempo solo en los pasos que permite YouTube. Al cargar un video en un deck se precargan ~90 s en silencio (barra tenue = buffer); con ⏬ se piden 2 min más. Para SYNC marca el BPM de cada deck con TAP.</p>
       <div id="yt-ui"></div>`;
     try {
       const motorYt = new MotorYouTube({ contenedorA: document.getElementById('yt-player-a'), contenedorB: document.getElementById('yt-player-b') });
@@ -178,6 +180,7 @@ async function iniciar() {
       uiYt.render();
       const formYt = document.getElementById('yt-agregar'); const campoYt = document.getElementById('yt-enlace');
       formYt.addEventListener('submit', (ev) => { ev.preventDefault(); const t = campoYt.value; campoYt.value = ''; uiYt.importarEnlaces(t); });
+      new UIBuscadorYouTube(document.getElementById('yt-buscador'), { alAgregar: (videoId) => uiYt.importarEnlaces(videoId) });
       consola.suscribir(TiposEvento.PAD_DISPARADO, ({ bancoId, soundId }) => {
         const t = consola.estado();
         try {

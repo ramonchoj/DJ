@@ -58,7 +58,14 @@ export class UIDJ {
     cab.appendChild(info);
     const bpm = el('div', 'deck-bpm', d.pista?.bpm ? `${d.bpmEfectivo} BPM` : '— BPM');
     if (d.pista?.tono) bpm.appendChild(el('span', 'deck-tono', d.pista.tono));
+    if (d.pista && this.#opciones.fuente === 'youtube') {
+      const tasaReal = this.#dj.motor.tasaReal?.(id); if (tasaReal && Math.abs(tasaReal - 1) > 0.001) bpm.appendChild(el('span', 'deck-tono', `×${tasaReal.toFixed(2)}`));
+    }
     cab.appendChild(bpm);
+    const tap = el('button', 'boton-deck boton-tap', 'TAP'); tap.type = 'button'; tap.disabled = !d.pista;
+    tap.title = 'Tap tempo: tócalo al ritmo de la música (8 veces) para fijar el BPM y poder usar SYNC';
+    tap.onclick = () => this.#tap(id, tap);
+    cab.appendChild(tap);
     sec.appendChild(cab);
 
     const esYt = this.#opciones.fuente === 'youtube';
@@ -102,7 +109,7 @@ export class UIDJ {
     }
     transporte.appendChild(loops);
     const sync = el('button', 'boton-deck', 'SYNC'); sync.title = 'Igualar BPM al otro deck'; sync.disabled = !d.pista || !e.decks[id === 'A' ? 'B' : 'A'].pista;
-    sync.onclick = () => this.#dj.sincronizar(id);
+    sync.onclick = () => { try { this.#dj.sincronizar(id); } catch (x) { this.#error(x); } };
     transporte.appendChild(sync);
     if (esYt) {
       const pre = el('button', 'boton-deck', '⏬'); pre.title = 'Precargar: llena el buffer (internet lento) sin que suene'; pre.disabled = !d.pista || d.sonando;
@@ -123,6 +130,20 @@ export class UIDJ {
     if (esYt) controles.classList.add('deck-controles--yt');
     sec.appendChild(controles);
     return sec;
+  }
+
+  #taps = { A: [], B: [] };
+  #tap(id, boton) {
+    const ahora = performance.now();
+    const t = this.#taps[id];
+    if (t.length && ahora - t[t.length - 1] > 2000) t.length = 0; // pausa larga: empezar de nuevo
+    t.push(ahora);
+    if (t.length > 12) t.shift();
+    if (t.length < 4) { boton.textContent = `TAP ${t.length}`; return; }
+    const intervalos = t.slice(1).map((v, i) => v - t[i]);
+    const bpm = 60000 / (intervalos.reduce((a, b) => a + b, 0) / intervalos.length);
+    boton.textContent = `${bpm.toFixed(1)}`;
+    this.#dj.fijarBpm(id, bpm).catch((x) => this.#error(x));
   }
 
   #slider(etiqueta, valorTexto, min, max, paso, valor, onInput, { doble = null, kill = null } = {}) {
